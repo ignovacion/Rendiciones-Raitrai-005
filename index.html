@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario con NFC</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Formulario con NFC</h1>
+    <form id="formulario">
+        <label for="programa">Programa:</label>
+        <input type="text" id="programa" required>
+
+        <label for="actividad">Actividad:</label>
+        <input type="text" id="actividad" required>
+
+        <label for="fecha">Fecha Actividad:</label>
+        <input type="date" id="fecha" required>
+
+        <label for="coordinador">Coordinador:</label>
+        <input type="text" id="coordinador" required>
+
+        <label for="colegio">Colegio:</label>
+        <input type="text" id="colegio" required>
+
+        <label for="estudiantes">Cantidad de Estudiantes:</label>
+        <input type="number" id="estudiantes" required>
+
+        <label for="apoderados">Cantidad de Apoderados:</label>
+        <input type="number" id="apoderados" required>
+
+        <label for="nfc">Datos NFC:</label>
+        <input type="text" id="nfc" readonly>
+
+        <button type="button" id="firmarButton">Firmar (Leer NFC)</button>
+        <button type="submit">Enviar</button>
+    </form>
+    <p id="status"></p>
+    <script src="script.js"></script>
+</body>
+</html>
