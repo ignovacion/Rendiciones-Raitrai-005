@@ -20,7 +20,7 @@ async function leerNFC(campoDestino, statusMsg) {
     }
 }
 
-// Asociar los botones para cada firma NFC
+// Asociar botones NFC
 document.getElementById("firmarResponsable").addEventListener("click", () => {
     leerNFC("responsable", "status");
 });
@@ -29,27 +29,31 @@ document.getElementById("firmarCoordinador").addEventListener("click", () => {
     leerNFC("coordinador", "status");
 });
 
-// Manejar el envío del formulario
+// Enviar el formulario usando EmailJS
 document.getElementById("formulario").addEventListener("submit", (event) => {
     event.preventDefault();
-    const responsable = document.getElementById("responsable").value;
-    const coordinador = document.getElementById("coordinador").value;
 
-    if (!responsable || !coordinador) {
-        document.getElementById("status").innerText = "Ambas firmas NFC son necesarias.";
-        return;
-    }
-
-    console.log("Formulario Enviado:", {
+    const templateParams = {
         programa: document.getElementById("programa").value,
         actividad: document.getElementById("actividad").value,
         fecha: document.getElementById("fecha").value,
         colegio: document.getElementById("colegio").value,
         estudiantes: document.getElementById("estudiantes").value,
         apoderados: document.getElementById("apoderados").value,
-        responsable,
-        coordinador
-    });
+        responsable: document.getElementById("responsable").value,
+        correoResponsable: document.getElementById("correoResponsable").value,
+        coordinador: document.getElementById("coordinador").value,
+        correoCoordinador: document.getElementById("correoCoordinador").value,
+        nfc: "Datos NFC firmados",
+        destinoEmpresa: "contacto@ignovacion.com"
+    };
 
-    document.getElementById("status").innerText = "Formulario enviado correctamente.";
+    emailjs.send("TU_SERVICE_ID", "TU_TEMPLATE_ID", templateParams)
+        .then(function (response) {
+            console.log("Correo enviado exitosamente:", response.status, response.text);
+            document.getElementById("status").innerText = "Formulario enviado correctamente.";
+        }, function (error) {
+            console.error("Error al enviar el correo:", error);
+            document.getElementById("status").innerText = "Error al enviar el formulario.";
+        });
 });
