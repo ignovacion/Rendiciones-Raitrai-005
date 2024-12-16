@@ -28,16 +28,21 @@
         <label for="apoderados">Cantidad de Apoderados:</label>
         <input type="number" id="apoderados" required>
 
-        <!-- Firmas NFC -->
+        <!-- Firma Responsable -->
         <label for="responsable">Responsable Actividad:</label>
         <input type="text" id="responsable" readonly placeholder="Acercar Tag NFC">
-
         <button type="button" id="firmarResponsable">Firmar Responsable</button>
 
+        <label for="correoResponsable">Correo del Responsable:</label>
+        <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com" required>
+
+        <!-- Firma Coordinador -->
         <label for="coordinador">Coordinador de Grupo:</label>
         <input type="text" id="coordinador" readonly placeholder="Acercar Tag NFC">
-
         <button type="button" id="firmarCoordinador">Firmar Coordinador</button>
+
+        <label for="correoCoordinador">Correo del Coordinador:</label>
+        <input type="email" id="correoCoordinador" placeholder="correo@ejemplo.com" required>
 
         <!-- Botón para enviar -->
         <button type="submit" id="enviar">Enviar</button>
@@ -47,3 +52,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
