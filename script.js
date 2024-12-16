@@ -1,46 +1,55 @@
-// Función para leer NFC
-async function leerNFC() {
+async function leerNFC(campoDestino, statusMsg) {
     if ('NDEFReader' in window) {
         try {
             const nfcReader = new NDEFReader();
             await nfcReader.scan();
-            document.getElementById("status").innerText = "Esperando datos del Tag NFC...";
+            document.getElementById(statusMsg).innerText = "Escaneando Tag NFC...";
 
             nfcReader.onreading = (event) => {
                 const nfcMessage = event.message.records[0];
                 const nfcData = new TextDecoder().decode(nfcMessage.data);
-                document.getElementById("nfc").value = nfcData;
-                document.getElementById("status").innerText = "Datos NFC leídos correctamente.";
+                document.getElementById(campoDestino).value = nfcData;
+                document.getElementById(statusMsg).innerText = "Firma completada.";
             };
         } catch (error) {
             console.error("Error al leer NFC:", error);
-            document.getElementById("status").innerText = "Error al leer NFC. Intenta nuevamente.";
+            document.getElementById(statusMsg).innerText = "Error al leer NFC. Intenta nuevamente.";
         }
     } else {
-        document.getElementById("status").innerText = "Tu navegador no soporta NFC.";
+        document.getElementById(statusMsg).innerText = "Tu navegador no soporta NFC.";
     }
 }
 
-// Asociar la función al botón "Firmar"
-document.getElementById("firmarButton").addEventListener("click", leerNFC);
+// Asociar los botones para cada firma NFC
+document.getElementById("firmarResponsable").addEventListener("click", () => {
+    leerNFC("responsable", "status");
+});
+
+document.getElementById("firmarCoordinador").addEventListener("click", () => {
+    leerNFC("coordinador", "status");
+});
 
 // Manejar el envío del formulario
 document.getElementById("formulario").addEventListener("submit", (event) => {
     event.preventDefault();
-    const programa = document.getElementById("programa").value;
-    const actividad = document.getElementById("actividad").value;
-    const fecha = document.getElementById("fecha").value;
+    const responsable = document.getElementById("responsable").value;
     const coordinador = document.getElementById("coordinador").value;
-    const colegio = document.getElementById("colegio").value;
-    const estudiantes = document.getElementById("estudiantes").value;
-    const apoderados = document.getElementById("apoderados").value;
-    const nfc = document.getElementById("nfc").value;
 
-    if (!programa || !actividad || !fecha || !coordinador || !colegio || !estudiantes || !apoderados || !nfc) {
-        document.getElementById("status").innerText = "Por favor completa todos los campos.";
+    if (!responsable || !coordinador) {
+        document.getElementById("status").innerText = "Ambas firmas NFC son necesarias.";
         return;
     }
 
-    console.log("Formulario Enviado:", { programa, actividad, fecha, coordinador, colegio, estudiantes, apoderados, nfc });
+    console.log("Formulario Enviado:", {
+        programa: document.getElementById("programa").value,
+        actividad: document.getElementById("actividad").value,
+        fecha: document.getElementById("fecha").value,
+        colegio: document.getElementById("colegio").value,
+        estudiantes: document.getElementById("estudiantes").value,
+        apoderados: document.getElementById("apoderados").value,
+        responsable,
+        coordinador
+    });
+
     document.getElementById("status").innerText = "Formulario enviado correctamente.";
 });
