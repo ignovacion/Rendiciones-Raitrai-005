@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vouchers de RAITRAI</title>
+    <title>VOUCHERS DE RAITRAI</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Vouchers de Raitrai</h1>
+    <h1>VOUCHERS DE RAITRAI</h1>
     <form id="formulario">
+        <!-- Campos principales -->
         <label for="programa">Programa:</label>
         <input type="text" id="programa" required>
 
@@ -17,9 +18,6 @@
 
         <label for="fecha">Fecha Actividad:</label>
         <input type="date" id="fecha" required>
-
-        <label for="coordinador">Coordinador:</label>
-        <input type="text" id="coordinador" required>
 
         <label for="colegio">Colegio:</label>
         <input type="text" id="colegio" required>
@@ -30,13 +28,22 @@
         <label for="apoderados">Cantidad de Apoderados:</label>
         <input type="number" id="apoderados" required>
 
-        <label for="nfc">Datos Proovedor:</label>
-        <input type="text" id="nfc" readonly>
+        <!-- Firmas NFC -->
+        <label for="responsable">Responsable Actividad:</label>
+        <input type="text" id="responsable" readonly placeholder="Acercar Tag NFC">
 
-        <button type="button" id="firmarButton">Firmar</button>
-        <button type="submit">Enviar</button>
+        <button type="button" id="firmarResponsable">Firmar Responsable</button>
+
+        <label for="coordinador">Coordinador de Grupo:</label>
+        <input type="text" id="coordinador" readonly placeholder="Acercar Tag NFC">
+
+        <button type="button" id="firmarCoordinador">Firmar Coordinador</button>
+
+        <!-- Botón para enviar -->
+        <button type="submit" id="enviar">Enviar</button>
     </form>
     <p id="status"></p>
+
     <script src="script.js"></script>
 </body>
 </html>
