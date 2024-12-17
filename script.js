@@ -7,46 +7,35 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
     document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
 });
 
-// Función para leer NFC y actualizar el campo destino
+// Función para leer NFC
 async function leerNFC(campoDestino) {
     if ('NDEFReader' in window) {
         try {
             const nfcReader = new NDEFReader();
             await nfcReader.scan();
-            console.log("Escaneando NFC... Acerca el tag al dispositivo.");
 
-            document.getElementById("status").innerText = "Escaneando NFC... Acerca el tag.";
+            console.log("Escaneando NFC... Acerca el tag.");
+            document.getElementById("status").innerText = "Escaneando NFC...";
 
             nfcReader.onreading = (event) => {
-                console.log("Evento de lectura NFC recibido", event);
+                const nfcMessage = event.message.records[0];
+                const nfcData = new TextDecoder().decode(nfcMessage.data);
+                document.getElementById(campoDestino).value = nfcData;
 
-                let nfcData = "";
-
-                // Iterar sobre los registros de NFC
-                for (const record of event.message.records) {
-                    const decoder = new TextDecoder();
-                    nfcData += decoder.decode(record.data);
-                }
-
-                // Mostrar los datos en el campo correspondiente
-                document.getElementById(campoDestino).value = nfcData.trim();
-                document.getElementById("status").innerText = "Lectura completada con éxito.";
-
-                console.log(`Datos leídos: ${nfcData}`);
+                console.log("Lectura NFC exitosa:", nfcData);
+                document.getElementById("status").innerText = "Lectura completada.";
             };
-
         } catch (error) {
             console.error("Error al leer NFC:", error);
-            alert("Error al leer NFC. Intenta de nuevo.");
-            document.getElementById("status").innerText = "Error al leer NFC.";
+            alert("Error al leer NFC: " + error);
         }
     } else {
-        alert("Tu navegador no soporta NFC. Usa Google Chrome en Android.");
-        console.log("NFC no disponible en este navegador.");
+        alert("Tu navegador no soporta la lectura NFC. Usa Chrome en Android.");
+        console.log("NDEFReader no disponible.");
     }
 }
 
-// Asignar eventos a los botones de escanear
+// Botones de Escanear NFC
 document.getElementById("firmarResponsable").addEventListener("click", () => {
     leerNFC("responsable");
 });
@@ -56,7 +45,7 @@ document.getElementById("firmarCoordinador").addEventListener("click", () => {
 });
 
 // Envío del formulario
-document.getElementById("formulario").addEventListener("submit", function (event) {
+document.getElementById("formulario").addEventListener("submit", function(event) {
     event.preventDefault();
 
     document.body.innerHTML = `
