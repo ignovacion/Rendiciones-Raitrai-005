@@ -9,12 +9,7 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
 
 // Configurar EmailJS
 (function () {
-    try {
-        emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
-        console.log("EmailJS configurado correctamente.");
-    } catch (error) {
-        console.error("Error al inicializar EmailJS:", error);
-    }
+    emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
 })();
 
 // Función para leer NFC y actualizar el campo destino
@@ -32,20 +27,16 @@ async function leerNFC(campoDestino) {
                     const decoder = new TextDecoder();
                     nfcData += decoder.decode(record.data);
                 }
-
-                // Mostrar datos leídos
                 document.getElementById(campoDestino).value = nfcData.trim();
                 document.getElementById("status").innerText = "Lectura completada con éxito.";
                 console.log(`Datos leídos: ${nfcData}`);
             };
         } catch (error) {
             console.error("Error al leer NFC:", error);
-            document.getElementById("status").innerText = "Error al leer NFC. Intenta de nuevo.";
             alert("Error al leer NFC: " + error.message);
         }
     } else {
         alert("Tu navegador no soporta la lectura NFC. Usa Google Chrome en Android.");
-        console.log("NFC no disponible.");
     }
 }
 
@@ -62,8 +53,26 @@ document.getElementById("firmarCoordinador").addEventListener("click", () => {
 document.getElementById("formulario").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // Datos del formulario
+    // Obtener datos del formulario
     const tipo = document.getElementById("tipoRendicion").value;
+    const archivo = document.getElementById("imagenGasto").files[0]; // Archivo seleccionado
+
+    // Convertir archivo a Base64
+    if (tipo === "gastos" && archivo) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            enviarFormulario(e.target.result); // Llama a la función con el archivo Base64
+        };
+        reader.readAsDataURL(archivo);
+    } else {
+        enviarFormulario(); // Si no hay archivo, enviar los datos sin él
+    }
+});
+
+// Función para enviar formulario con o sin archivo adjunto
+function enviarFormulario(archivoBase64 = "") {
+    const tipo = document.getElementById("tipoRendicion").value;
+
     const templateParams = {
         tipo: tipo,
         programa: tipo === "voucher" ? document.getElementById("programa").value : document.getElementById("programaGasto").value,
@@ -75,11 +84,12 @@ document.getElementById("formulario").addEventListener("submit", function (event
         correoCoordinador: document.getElementById("correoCoordinador").value,
         asuntoGasto: document.getElementById("asuntoGasto")?.value || "",
         valorGasto: document.getElementById("valorGasto")?.value || "",
+        archivoBase64: archivoBase64, // El archivo convertido en Base64
     };
 
     console.log("Enviando los siguientes datos:", templateParams);
 
-    // Enviar datos con EmailJS
+    // Enviar datos usando EmailJS
     emailjs.send("service_4u5obts", "template_5fi1hjp", templateParams)
         .then(function (response) {
             console.log("Correo enviado exitosamente:", response.status, response.text);
@@ -92,4 +102,4 @@ document.getElementById("formulario").addEventListener("submit", function (event
             console.error("Error al enviar el formulario:", error);
             alert("Error al enviar el formulario. Revisa la consola para más detalles.");
         });
-});
+}
