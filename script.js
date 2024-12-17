@@ -1,105 +1,91 @@
-console.log("Formulario desarrollado por www.ignovacion.com");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rendiciones de Raitrai</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Rendiciones de Raitrai</h1>
 
-// Inicializar EmailJS
-(function () {
-    emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
-    console.log("EmailJS inicializado correctamente.");
-})();
+    <form id="formulario">
+        <!-- Selector inicial -->
+        <label for="tipoRendicion">Tipo de Rendición:</label>
+        <select id="tipoRendicion" required>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="voucher">Rendición de Voucher</option>
+            <option value="gastos">Rendición de Gastos</option>
+        </select>
 
-// Mostrar/ocultar secciones según el tipo de rendición
-document.getElementById("tipoRendicion").addEventListener("change", function () {
-    const tipo = this.value;
-    document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
-    document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
-});
+        <!-- Sección para Rendición de Voucher -->
+        <div id="seccionVoucher" style="display: none;">
+            <label for="programa">Programa:</label>
+            <input type="text" id="programa" required>
 
-// Función para leer NFC y actualizar un campo
-async function leerNFC(campoDestino) {
-    if ("NDEFReader" in window) {
-        try {
-            const nfcReader = new NDEFReader();
-            await nfcReader.scan();
-            console.log("Escaneando NFC... Acerca el tag al dispositivo.");
+            <label for="actividad">Actividad:</label>
+            <input type="text" id="actividad" required>
 
-            nfcReader.onreading = (event) => {
-                let nfcData = "";
-                for (const record of event.message.records) {
-                    const decoder = new TextDecoder();
-                    nfcData += decoder.decode(record.data);
-                }
-                document.getElementById(campoDestino).value = nfcData.trim();
-                mostrarMensaje("Lectura completada con éxito.", "green");
-            };
-        } catch (error) {
-            console.error("Error al leer NFC:", error);
-            mostrarMensaje("Error al leer NFC. Intenta de nuevo.", "red");
-        }
-    } else {
-        alert("NFC no soportado en este navegador. Usa Chrome en Android.");
-    }
-}
+            <label for="fecha">Fecha Actividad:</label>
+            <input type="date" id="fecha" required>
 
-// Función para mostrar mensajes en la pantalla
-function mostrarMensaje(mensaje, color) {
-    const status = document.getElementById("status");
-    status.style.color = color;
-    status.innerText = mensaje;
-}
+            <label for="colegio">Colegio:</label>
+            <input type="text" id="colegio" required>
 
-// Eventos de botones NFC
-document.getElementById("firmarResponsable").addEventListener("click", () => {
-    leerNFC("responsable");
-});
+            <label for="estudiantes">Cantidad de Estudiantes:</label>
+            <input type="number" id="estudiantes" required>
 
-document.getElementById("firmarCoordinador").addEventListener("click", () => {
-    leerNFC("coordinador");
-});
+            <label for="apoderados">Cantidad de Apoderados:</label>
+            <input type="number" id="apoderados" required>
 
-// Envío del formulario a EmailJS
-document.getElementById("formulario").addEventListener("submit", function (event) {
-    event.preventDefault();
+            <button type="button" id="firmarResponsable">Escanear TAG Responsable</button>
+            <label for="responsable">Responsable Actividad:</label>
+            <input type="text" id="responsable" readonly placeholder="Firma Electrónica de Responsable de Actividad">
 
-    const tipo = document.getElementById("tipoRendicion").value;
-    const archivo = document.getElementById("imagenGasto")?.files[0];
+            <label for="correoResponsable">Correo del Responsable:</label>
+            <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com" required>
+        </div>
 
-    // Capturar datos del formulario
-    const templateParams = {
-        tipo: tipo,
-        programa: tipo === "voucher" ? document.getElementById("programa").value : document.getElementById("programaGasto").value,
-        colegio: tipo === "voucher" ? document.getElementById("colegio").value : document.getElementById("colegioGasto").value,
-        fecha: tipo === "voucher" ? document.getElementById("fecha").value : document.getElementById("fechaGasto").value,
-        responsable: document.getElementById("responsable")?.value || "No aplica",
-        correoResponsable: document.getElementById("correoResponsable")?.value || "No aplica",
-        coordinador: document.getElementById("coordinador").value,
-        correoCoordinador: document.getElementById("correoCoordinador").value,
-        asuntoGasto: document.getElementById("asuntoGasto")?.value || "",
-        valorGasto: document.getElementById("valorGasto")?.value || "",
-    };
+        <!-- Sección para Rendición de Gastos -->
+        <div id="seccionGastos" style="display: none;">
+            <label for="programaGasto">Programa:</label>
+            <input type="text" id="programaGasto" required>
 
-    console.log("Enviando datos a EmailJS:", templateParams);
+            <label for="colegioGasto">Colegio:</label>
+            <input type="text" id="colegioGasto" required>
 
-    // Si hay archivo, lo convertimos a Base64
-    if (archivo) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            templateParams.archivoBase64 = e.target.result; // Archivo en Base64
-            enviarEmail(templateParams);
-        };
-        reader.readAsDataURL(archivo);
-    } else {
-        enviarEmail(templateParams);
-    }
-});
+            <label for="fechaGasto">Fecha del Gasto:</label>
+            <input type="date" id="fechaGasto" required>
 
-// Función para enviar correo con EmailJS
-function enviarEmail(params) {
-    emailjs.send("service_4u5obts", "template_5fi1hjp", params)
-        .then(function (response) {
-            console.log("Correo enviado exitosamente:", response.status, response.text);
-            mostrarMensaje("¡Datos enviados con éxito!", "green");
-            setTimeout(() => window.location.reload(), 3000); // Refresca el formulario
-        }, function (error) {
-            console.error("Error al enviar correo:", error);
-            mostrarMensaje("Error al enviar el formulario. Intenta de nuevo.", "red");
-        });
-}
+            <label for="asuntoGasto">Asunto del Gasto:</label>
+            <input type="text" id="asuntoGasto" required>
+
+            <label for="valorGasto">Valor del Gasto:</label>
+            <input type="number" id="valorGasto" placeholder="Ej: 50000" required>
+
+            <label for="imagenGasto">Subir Boleta/Factura:</label>
+            <input type="file" id="imagenGasto" accept="image/*" required>
+        </div>
+
+        <!-- Firma del Coordinador -->
+        <button type="button" id="firmarCoordinador">Escanear TAG Coordinador</button>
+        <label for="coordinador">Coordinador de Grupo:</label>
+        <input type="text" id="coordinador" readonly placeholder="Firma Electrónica de Coordinador de Grupo">
+
+        <label for="correoCoordinador">Correo del Coordinador:</label>
+        <input type="email" id="correoCoordinador" placeholder="correo@ejemplo.com" required>
+
+        <button type="submit" id="enviar">Enviar</button>
+    </form>
+    <p id="status"></p>
+
+    <!-- Marca de creación -->
+    <footer style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
+        <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank" style="color: #4CAF50; text-decoration: none;">
+            www.ignovacion.com
+        </a></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
