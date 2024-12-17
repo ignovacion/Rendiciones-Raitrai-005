@@ -1,60 +1,46 @@
-$w.onReady(function () {
-    // Evento al hacer clic en el botón "Firmar"
-    $w("#firmarButton").onClick(async () => {
-        // Verifica si el navegador soporta NFC
-        if ('NDEFReader' in window) {
-            try {
-                // Inicia el lector NFC
-                const nfcReader = new NDEFReader();
-                await nfcReader.scan();
-                nfcReader.onreading = event => {
-                    const nfcTagData = event.message.records[0].data; // Datos del Tag NFC
-                    console.log("Datos NFC leídos:", nfcTagData);
-                    
-                    // Guarda los datos NFC en un campo oculto
-                    $w("#nfcDataField").value = nfcTagData;
+// Función para leer NFC
+async function leerNFC() {
+    if ('NDEFReader' in window) {
+        try {
+            const nfcReader = new NDEFReader();
+            await nfcReader.scan();
+            document.getElementById("status").innerText = "Esperando datos del Tag NFC...";
 
-                    // Verifica si el Tag NFC es válido
-                    validarYEnviarFormulario(nfcTagData);
-                };
-            } catch (error) {
-                console.error("Error al leer NFC:", error);
-                $w("#errorText").text = "Hubo un problema al leer el NFC. Intenta de nuevo.";
-            }
-        } else {
-            $w("#errorText").text = "Tu dispositivo no soporta NFC.";
+            nfcReader.onreading = (event) => {
+                const nfcMessage = event.message.records[0];
+                const nfcData = new TextDecoder().decode(nfcMessage.data);
+                document.getElementById("nfc").value = nfcData;
+                document.getElementById("status").innerText = "Datos NFC leídos correctamente.";
+            };
+        } catch (error) {
+            console.error("Error al leer NFC:", error);
+            document.getElementById("status").innerText = "Error al leer NFC. Intenta nuevamente.";
         }
-    });
-});
-
-// Función para validar y enviar el formulario
-function validarYEnviarFormulario(nfcTagData) {
-    const formularioDatos = {
-        gira: $w("#giraInput").value,
-        colegio: $w("#colegioInput").value,
-        nombreCoordinador: $w("#nombreCoordinadorInput").value,
-        actividad: $w("#actividadInput").value,
-        fecha: $w("#fechaInput").value,
-        cantidadEstudiantes: $w("#cantidadEstudiantesInput").value,
-        cantidadAdultos: $w("#cantidadAdultosInput").value,
-        cantidadCoordinadores: $w("#cantidadCoordinadoresInput").value,
-        nfcData: nfcTagData
-    };
-
-    // Comprueba si el Tag NFC contiene datos válidos
-    if (nfcTagData && nfcTagData.length > 0) {
-        // Envía los datos a la base de datos
-        wixData.insert("nombreDeTuColeccion", formularioDatos)
-            .then(() => {
-                console.log("Datos guardados correctamente.");
-                $w("#successText").text = "Formulario enviado con éxito.";
-            })
-            .catch((err) => {
-                console.error("Error al guardar los datos:", err);
-                $w("#errorText").text = "Hubo un error al enviar el formulario.";
-            });
     } else {
-        $w("#errorText").text = "El Tag NFC no es válido.";
+        document.getElementById("status").innerText = "Tu navegador no soporta NFC.";
     }
 }
 
+// Asociar la función al botón "Firmar"
+document.getElementById("firmarButton").addEventListener("click", leerNFC);
+
+// Manejar el envío del formulario
+document.getElementById("formulario").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const programa = document.getElementById("programa").value;
+    const actividad = document.getElementById("actividad").value;
+    const fecha = document.getElementById("fecha").value;
+    const coordinador = document.getElementById("coordinador").value;
+    const colegio = document.getElementById("colegio").value;
+    const estudiantes = document.getElementById("estudiantes").value;
+    const apoderados = document.getElementById("apoderados").value;
+    const nfc = document.getElementById("nfc").value;
+
+    if (!programa || !actividad || !fecha || !coordinador || !colegio || !estudiantes || !apoderados || !nfc) {
+        document.getElementById("status").innerText = "Por favor completa todos los campos.";
+        return;
+    }
+
+    console.log("Formulario Enviado:", { programa, actividad, fecha, coordinador, colegio, estudiantes, apoderados, nfc });
+    document.getElementById("status").innerText = "Formulario enviado correctamente.";
+});
