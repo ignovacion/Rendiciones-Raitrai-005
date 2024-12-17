@@ -7,15 +7,10 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
     document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
 });
 
-// Configurar EmailJS
+// Inicializar EmailJS
 (function () {
-    try {
-        emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
-        console.log("EmailJS configurado correctamente.");
-    } catch (error) {
-        console.error("Error al inicializar EmailJS:", error);
-        mostrarError("Error al configurar EmailJS.");
-    }
+    emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
+    console.log("EmailJS inicializado.");
 })();
 
 // Función para mostrar errores en la pantalla
@@ -25,14 +20,21 @@ function mostrarError(mensaje) {
     status.innerText = mensaje;
 }
 
-// Función para leer NFC y actualizar el campo destino
+// Función para mostrar mensajes de éxito
+function mostrarExito(mensaje) {
+    const status = document.getElementById("status");
+    status.style.color = "green";
+    status.innerText = mensaje;
+}
+
+// Función de lectura NFC
 async function leerNFC(campoDestino) {
     if ('NDEFReader' in window) {
         try {
             const nfcReader = new NDEFReader();
             await nfcReader.scan();
             console.log("Escaneando NFC... Acerca el tag al dispositivo.");
-            document.getElementById("status").innerText = "Escaneando NFC... Acerca el tag.";
+            document.getElementById("status").innerText = "Escaneando NFC...";
 
             nfcReader.onreading = (event) => {
                 let nfcData = "";
@@ -41,7 +43,7 @@ async function leerNFC(campoDestino) {
                     nfcData += decoder.decode(record.data);
                 }
                 document.getElementById(campoDestino).value = nfcData.trim();
-                document.getElementById("status").innerText = "Lectura completada con éxito.";
+                mostrarExito("Lectura completada con éxito.");
                 console.log(`Datos leídos: ${nfcData}`);
             };
         } catch (error) {
@@ -53,7 +55,7 @@ async function leerNFC(campoDestino) {
     }
 }
 
-// Asignar eventos a los botones de escanear
+// Eventos de botones de lectura NFC
 document.getElementById("firmarResponsable").addEventListener("click", () => {
     leerNFC("responsable");
 });
@@ -62,7 +64,7 @@ document.getElementById("firmarCoordinador").addEventListener("click", () => {
     leerNFC("coordinador");
 });
 
-// Envío del formulario con EmailJS
+// Envío del formulario
 document.getElementById("formulario").addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -82,19 +84,33 @@ document.getElementById("formulario").addEventListener("submit", function (event
         valorGasto: document.getElementById("valorGasto")?.value || "",
     };
 
-    console.log("Intentando enviar los datos a EmailJS:", templateParams);
+    // Si hay archivo, lo convertimos a Base64
+    if (archivo) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            templateParams.archivoBase64 = e.target.result;
+            enviarCorreo(templateParams);
+        };
+        reader.readAsDataURL(archivo);
+    } else {
+        enviarCorreo(templateParams);
+    }
+});
 
-    // Enviar datos usando EmailJS
-    emailjs.send("service_4u5obts", "template_5fi1hjp", templateParams)
+// Función para enviar correo con EmailJS
+function enviarCorreo(params) {
+    console.log("Enviando datos a EmailJS:", params);
+
+    emailjs.send("service_4u5obts", "template_5fi1hjp", params)
         .then(function (response) {
             console.log("Correo enviado exitosamente:", response.status, response.text);
             document.body.innerHTML = `
                 <h1 style="text-align: center; color: #4CAF50;">Datos enviados con éxito</h1>
-                <p style="text-align: center; color: #333;">Gracias. Preparando el formulario para una nueva rendición...</p>
+                <p style="text-align: center; color: #333;">Gracias. Preparando el formulario...</p>
             `;
             setTimeout(() => window.location.reload(), 3000);
         }, function (error) {
-            console.error("Error al enviar los datos:", error);
-            mostrarError("Hubo un error al enviar los datos. Revisa la conexión.");
+            console.error("Error al enviar el formulario:", error);
+            mostrarError("Error al enviar los datos. Revisa tu conexión e intenta de nuevo.");
         });
-});
+}
