@@ -60,7 +60,7 @@ document.getElementById("formulario").addEventListener("submit", (event) => {
         programa: tipo === "voucher" ? document.getElementById("programa").value : document.getElementById("programaGasto").value,
         colegio: tipo === "voucher" ? document.getElementById("colegio").value : document.getElementById("colegioGasto").value,
         fecha: tipo === "voucher" ? document.getElementById("fecha").value : document.getElementById("fechaGasto").value,
-        responsables: document.getElementById("responsable").value || "No aplica",
+        responsable: document.getElementById("responsable").value || "No aplica",
         correoResponsable: document.getElementById("correoResponsable")?.value || "No aplica",
         coordinador: document.getElementById("coordinador").value,
         correoCoordinador: document.getElementById("correoCoordinador").value,
