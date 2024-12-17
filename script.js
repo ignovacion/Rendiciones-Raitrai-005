@@ -1,3 +1,11 @@
+// Mostrar/ocultar secciones según el tipo de rendición
+document.getElementById("tipoRendicion").addEventListener("change", function () {
+    const tipo = this.value;
+    document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
+    document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
+});
+
+// Función para leer NFC
 async function leerNFC(campoDestino, statusMsg) {
     if ('NDEFReader' in window) {
         try {
@@ -16,11 +24,11 @@ async function leerNFC(campoDestino, statusMsg) {
             document.getElementById(statusMsg).innerText = "Error al leer NFC. Intenta nuevamente.";
         }
     } else {
-        document.getElementById(statusMsg).innerText = "Tu navegador no soporta NFC.";
+        alert("Tu navegador no soporta NFC.");
     }
 }
 
-// Asociar botones NFC
+// Asociar los botones NFC
 document.getElementById("firmarResponsable").addEventListener("click", () => {
     leerNFC("responsable", "status");
 });
@@ -29,31 +37,27 @@ document.getElementById("firmarCoordinador").addEventListener("click", () => {
     leerNFC("coordinador", "status");
 });
 
-// Enviar el formulario usando EmailJS
+// Manejo del envío
 document.getElementById("formulario").addEventListener("submit", (event) => {
     event.preventDefault();
+    const tipo = document.getElementById("tipoRendicion").value;
 
-    const templateParams = {
-        programa: document.getElementById("programa").value,
-        actividad: document.getElementById("actividad").value,
-        fecha: document.getElementById("fecha").value,
-        colegio: document.getElementById("colegio").value,
-        estudiantes: document.getElementById("estudiantes").value,
-        apoderados: document.getElementById("apoderados").value,
-        responsable: document.getElementById("responsable").value,
-        correoResponsable: document.getElementById("correoResponsable").value,
+    const datos = {
+        tipo,
+        programa: document.getElementById("programa")?.value || null,
+        actividad: document.getElementById("actividad")?.value || null,
+        fecha: document.getElementById("fecha")?.value || null,
+        colegio: document.getElementById("colegio")?.value || null,
+        estudiantes: document.getElementById("estudiantes")?.value || null,
+        apoderados: document.getElementById("apoderados")?.value || null,
+        asuntoGasto: document.getElementById("asuntoGasto")?.value || null,
+        valorGasto: document.getElementById("valorGasto")?.value || null,
+        responsable: document.getElementById("responsable")?.value || null,
         coordinador: document.getElementById("coordinador").value,
+        correoResponsable: document.getElementById("correoResponsable")?.value || null,
         correoCoordinador: document.getElementById("correoCoordinador").value,
-        nfc: "Datos NFC firmados",
-        destinoEmpresa: "contacto@ignovacion.com"
     };
 
-    emailjs.send("TU_SERVICE_ID", "TU_TEMPLATE_ID", templateParams)
-        .then(function (response) {
-            console.log("Correo enviado exitosamente:", response.status, response.text);
-            document.getElementById("status").innerText = "Formulario enviado correctamente.";
-        }, function (error) {
-            console.error("Error al enviar el correo:", error);
-            document.getElementById("status").innerText = "Error al enviar el formulario.";
-        });
+    console.log("Formulario enviado:", datos);
+    alert("Formulario enviado correctamente.");
 });
