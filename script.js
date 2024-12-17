@@ -9,7 +9,12 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
 
 // Configurar EmailJS
 (function () {
-    emailjs.init("WoF5qDCeRay2IRCrH"); // Reemplaza con tu Public Key de EmailJS
+    try {
+        emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
+        console.log("EmailJS configurado correctamente.");
+    } catch (error) {
+        console.error("Error al inicializar EmailJS:", error);
+    }
 })();
 
 // Función para leer NFC y actualizar el campo destino
@@ -19,7 +24,6 @@ async function leerNFC(campoDestino) {
             const nfcReader = new NDEFReader();
             await nfcReader.scan();
             console.log("Escaneando NFC... Acerca el tag al dispositivo.");
-
             document.getElementById("status").innerText = "Escaneando NFC... Acerca el tag.";
 
             nfcReader.onreading = (event) => {
@@ -28,18 +32,20 @@ async function leerNFC(campoDestino) {
                     const decoder = new TextDecoder();
                     nfcData += decoder.decode(record.data);
                 }
+
+                // Mostrar datos leídos
                 document.getElementById(campoDestino).value = nfcData.trim();
                 document.getElementById("status").innerText = "Lectura completada con éxito.";
                 console.log(`Datos leídos: ${nfcData}`);
             };
-
         } catch (error) {
             console.error("Error al leer NFC:", error);
-            alert("Error al leer NFC. Intenta de nuevo.");
-            document.getElementById("status").innerText = "Error al leer NFC.";
+            document.getElementById("status").innerText = "Error al leer NFC. Intenta de nuevo.";
+            alert("Error al leer NFC: " + error.message);
         }
     } else {
-        alert("Tu navegador no soporta NFC. Usa Google Chrome en Android.");
+        alert("Tu navegador no soporta la lectura NFC. Usa Google Chrome en Android.");
+        console.log("NFC no disponible.");
     }
 }
 
@@ -56,7 +62,7 @@ document.getElementById("firmarCoordinador").addEventListener("click", () => {
 document.getElementById("formulario").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // Obtener los datos del formulario
+    // Datos del formulario
     const tipo = document.getElementById("tipoRendicion").value;
     const templateParams = {
         tipo: tipo,
@@ -71,7 +77,9 @@ document.getElementById("formulario").addEventListener("submit", function (event
         valorGasto: document.getElementById("valorGasto")?.value || "",
     };
 
-    // Enviar los datos usando EmailJS
+    console.log("Enviando los siguientes datos:", templateParams);
+
+    // Enviar datos con EmailJS
     emailjs.send("service_4u5obts", "template_5fi1hjp", templateParams)
         .then(function (response) {
             console.log("Correo enviado exitosamente:", response.status, response.text);
@@ -81,7 +89,7 @@ document.getElementById("formulario").addEventListener("submit", function (event
             `;
             setTimeout(() => window.location.reload(), 3000);
         }, function (error) {
-            console.error("Error al enviar el correo:", error);
-            alert("Hubo un error al enviar los datos. Intenta de nuevo.");
+            console.error("Error al enviar el formulario:", error);
+            alert("Error al enviar el formulario. Revisa la consola para más detalles.");
         });
 });
