@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rendiciones de Raitrai</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Tesseract.js para OCR -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
 </head>
 <body>
     <h1>Rendiciones de Raitrai</h1>
@@ -67,7 +65,6 @@
 
             <label for="imagenGasto">Subir Boleta/Factura:</label>
             <input type="file" id="imagenGasto" accept="image/*" required>
-            <button type="button" id="extraerTexto">Extraer Datos de la Imagen</button>
         </div>
 
         <!-- Firma del Coordinador -->
@@ -81,6 +78,13 @@
         <button type="submit" id="enviar">Enviar</button>
     </form>
     <p id="status"></p>
+
+    <!-- Marca de creación -->
+    <footer style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
+        <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank" style="color: #4CAF50; text-decoration: none;">
+            www.ignovacion.com
+        </a></p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
