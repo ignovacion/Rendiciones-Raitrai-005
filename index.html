@@ -10,7 +10,7 @@
     <h1>Rendiciones de Raitrai</h1>
 
     <form id="formulario">
-        <!-- Selector inicial -->
+        <!-- Tipo de Rendición -->
         <label for="tipoRendicion">Tipo de Rendición:</label>
         <select id="tipoRendicion" required>
             <option value="" disabled selected>Selecciona una opción</option>
@@ -18,68 +18,61 @@
             <option value="gastos">Rendición de Gastos</option>
         </select>
 
-        <!-- Sección para Rendición de Voucher -->
+        <!-- Sección Voucher -->
         <div id="seccionVoucher" style="display: none;">
             <label for="programa">Programa:</label>
-            <input type="text" id="programa" required>
+            <input type="text" id="programa">
 
             <label for="actividad">Actividad:</label>
-            <input type="text" id="actividad" required>
+            <input type="text" id="actividad">
 
             <label for="fecha">Fecha Actividad:</label>
-            <input type="date" id="fecha" required>
+            <input type="date" id="fecha">
 
             <label for="colegio">Colegio:</label>
-            <input type="text" id="colegio" required>
-
-            <label for="estudiantes">Cantidad de Estudiantes:</label>
-            <input type="number" id="estudiantes" required>
-
-            <label for="apoderados">Cantidad de Apoderados:</label>
-            <input type="number" id="apoderados" required>
+            <input type="text" id="colegio">
 
             <button type="button" id="firmarResponsable">Escanear TAG Responsable</button>
             <label for="responsable">Responsable Actividad:</label>
-            <input type="text" id="responsable" readonly placeholder="Firma Electrónica de Responsable de Actividad">
+            <input type="text" id="responsable" readonly placeholder="Firma Electrónica de Responsable">
 
             <label for="correoResponsable">Correo del Responsable:</label>
-            <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com" required>
+            <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com">
         </div>
 
-        <!-- Sección para Rendición de Gastos -->
+        <!-- Sección Gastos -->
         <div id="seccionGastos" style="display: none;">
             <label for="programaGasto">Programa:</label>
-            <input type="text" id="programaGasto" required>
+            <input type="text" id="programaGasto">
 
             <label for="colegioGasto">Colegio:</label>
-            <input type="text" id="colegioGasto" required>
+            <input type="text" id="colegioGasto">
 
             <label for="fechaGasto">Fecha del Gasto:</label>
-            <input type="date" id="fechaGasto" required>
+            <input type="date" id="fechaGasto">
 
             <label for="asuntoGasto">Asunto del Gasto:</label>
-            <input type="text" id="asuntoGasto" required>
+            <input type="text" id="asuntoGasto">
 
             <label for="valorGasto">Valor del Gasto:</label>
-            <input type="number" id="valorGasto" placeholder="Ej: 50000" required>
+            <input type="number" id="valorGasto" placeholder="Ej: 50000">
 
             <label for="imagenGasto">Subir Boleta/Factura:</label>
-            <input type="file" id="imagenGasto" accept="image/*" required>
+            <input type="file" id="imagenGasto" accept="image/*">
         </div>
 
-        <!-- Firma del Coordinador -->
+        <!-- Firma Coordinador -->
         <button type="button" id="firmarCoordinador">Escanear TAG Coordinador</button>
         <label for="coordinador">Coordinador de Grupo:</label>
-        <input type="text" id="coordinador" readonly placeholder="Firma Electrónica de Coordinador de Grupo">
+        <input type="text" id="coordinador" readonly placeholder="Firma Electrónica de Coordinador">
 
         <label for="correoCoordinador">Correo del Coordinador:</label>
-        <input type="email" id="correoCoordinador" placeholder="correo@ejemplo.com" required>
+        <input type="email" id="correoCoordinador" placeholder="correo@ejemplo.com">
 
         <button type="submit" id="enviar">Enviar</button>
     </form>
     <p id="status"></p>
 
-    <!-- Marca de creación -->
     <footer style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
         <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank" style="color: #4CAF50; text-decoration: none;">
             www.ignovacion.com
