@@ -5,10 +5,10 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
     const tipo = this.value;
     document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
     document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
-    mostrarMensaje("Cuando estén todos los campos rellenos, presiona Enviar.", "blue");
+    mostrarMensaje("Rellena todos los campos y presiona Enviar.", "blue");
 });
 
-// Función para leer NFC y actualizar un campo
+// Función para leer NFC
 async function leerNFC(campoDestino) {
     if ("NDEFReader" in window) {
         try {
@@ -17,17 +17,11 @@ async function leerNFC(campoDestino) {
             mostrarMensaje("Escaneando NFC... Acerca el tag al dispositivo.", "orange");
 
             nfcReader.onreading = (event) => {
-                let nfcData = "";
-                for (const record of event.message.records) {
-                    const decoder = new TextDecoder();
-                    nfcData += decoder.decode(record.data);
-                }
+                const nfcData = new TextDecoder().decode(event.message.records[0].data);
                 document.getElementById(campoDestino).value = nfcData.trim();
                 mostrarMensaje("Lectura completada con éxito.", "green");
-                nfcReader.onreading = null; // Cerrar lectura
             };
         } catch (error) {
-            console.error("Error al leer NFC:", error);
             mostrarMensaje("Error al leer NFC. Intenta de nuevo.", "red");
         }
     } else {
@@ -40,68 +34,41 @@ function mostrarMensaje(mensaje, color) {
     const status = document.getElementById("status");
     status.style.color = color;
     status.innerText = mensaje;
-
-    setTimeout(() => {
-        status.innerText = "Cuando estén todos los campos rellenos, presiona Enviar.";
-        status.style.color = "blue";
-    }, 5000);
 }
 
 // Botones de lectura NFC
 document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
 document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
 
-// Envío del formulario
+// Envío del formulario a Google Apps Script
 document.getElementById("formulario").addEventListener("submit", async (event) => {
     event.preventDefault();
+
     const tipo = document.getElementById("tipoRendicion").value;
-
-    // Capturar datos de Rendición de Voucher
-    let data = {};
-    if (tipo === "voucher") {
-        data = {
-            tipo: "Rendición de Voucher",
-            programa: document.getElementById("programa").value,
-            actividad: document.getElementById("actividad").value,
-            fecha: document.getElementById("fecha").value,
-            colegio: document.getElementById("colegio").value,
-            estudiantes: document.getElementById("estudiantes").value,
-            apoderados: document.getElementById("apoderados").value,
-            responsable: document.getElementById("responsable").value,
-            correoResponsable: document.getElementById("correoResponsable").value,
-            coordinador: document.getElementById("coordinador").value,
-            correoCoordinador: document.getElementById("correoCoordinador").value,
-        };
-    } 
-    // Capturar datos de Rendición de Gastos
-    else if (tipo === "gastos") {
-        data = {
-            tipo: "Rendición de Gastos",
-            programa: document.getElementById("programaGasto").value,
-            colegio: document.getElementById("colegioGasto").value,
-            fecha: document.getElementById("fechaGasto").value,
-            asunto: document.getElementById("asuntoGasto").value,
-            valor: document.getElementById("valorGasto").value,
-            coordinador: document.getElementById("coordinador").value,
-            correoCoordinador: document.getElementById("correoCoordinador").value,
-        };
-    }
-
-    // FormData para enviar
     const formData = new FormData();
-    for (const key in data) {
-        formData.append(key, data[key]);
+
+    // Capturar datos específicos del tipo de rendición
+    if (tipo === "voucher") {
+        formData.append("tipo", "Rendición de Voucher");
+        formData.append("programa", document.getElementById("programa").value);
+        formData.append("actividad", document.getElementById("actividad").value);
+        formData.append("fecha", document.getElementById("fecha").value);
+        formData.append("colegio", document.getElementById("colegio").value);
+        formData.append("responsable", document.getElementById("responsable").value);
+        formData.append("correoResponsable", document.getElementById("correoResponsable").value);
+    } else if (tipo === "gastos") {
+        formData.append("tipo", "Rendición de Gastos");
+        formData.append("programa", document.getElementById("programaGasto").value);
+        formData.append("colegio", document.getElementById("colegioGasto").value);
+        formData.append("fecha", document.getElementById("fechaGasto").value);
+        formData.append("asunto", document.getElementById("asuntoGasto").value);
+        formData.append("valor", document.getElementById("valorGasto").value);
     }
 
-    // Adjuntar archivo si es Gastos
-    if (tipo === "gastos") {
-        const fileInput = document.getElementById("imagenGasto");
-        if (fileInput.files.length > 0) {
-            formData.append("imagenGasto", fileInput.files[0]);
-        }
-    }
+    // Coordinador
+    formData.append("coordinador", document.getElementById("coordinador").value);
+    formData.append("correoCoordinador", document.getElementById("correoCoordinador").value);
 
-    // Enviar datos a Google Apps Script
     try {
         const response = await fetch("https://script.google.com/macros/s/AKfycbz1rrJ3CasBVxGQU9mdlCDXc8fDxcGd93ceA5RTn2OHzlDZKPkHG-KuX06eP9ee6xjocg/exec", {
             method: "POST",
@@ -111,6 +78,7 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
         const result = await response.text();
         console.log(result);
         mostrarMensaje("Los datos se enviaron con éxito.", "green");
+
         document.body.innerHTML = `
             <h1 style="text-align: center; color: #4CAF50;">Los datos rendidos se han enviado con éxito</h1>
             <p style="text-align: center;">Preparando el formulario para una nueva rendición...</p>
