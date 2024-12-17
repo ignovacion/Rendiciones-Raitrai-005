@@ -1,6 +1,7 @@
 // Mostrar/ocultar secciones según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
     const tipo = this.value;
+
     document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
     document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
 });
@@ -28,7 +29,7 @@ async function leerNFC(campoDestino, statusMsg) {
     }
 }
 
-// Asociar los botones NFC
+// Asociar botones NFC
 document.getElementById("firmarResponsable").addEventListener("click", () => {
     leerNFC("responsable", "status");
 });
@@ -44,12 +45,9 @@ document.getElementById("formulario").addEventListener("submit", (event) => {
 
     const datos = {
         tipo,
-        programa: document.getElementById("programa")?.value || null,
-        actividad: document.getElementById("actividad")?.value || null,
-        fecha: document.getElementById("fecha")?.value || null,
-        colegio: document.getElementById("colegio")?.value || null,
-        estudiantes: document.getElementById("estudiantes")?.value || null,
-        apoderados: document.getElementById("apoderados")?.value || null,
+        programa: tipo === "voucher" ? document.getElementById("programa").value : document.getElementById("programaGasto").value,
+        colegio: tipo === "voucher" ? document.getElementById("colegio").value : document.getElementById("colegioGasto").value,
+        fecha: tipo === "voucher" ? document.getElementById("fecha").value : document.getElementById("fechaGasto").value,
         asuntoGasto: document.getElementById("asuntoGasto")?.value || null,
         valorGasto: document.getElementById("valorGasto")?.value || null,
         responsable: document.getElementById("responsable")?.value || null,
