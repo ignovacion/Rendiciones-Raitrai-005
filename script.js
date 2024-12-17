@@ -1,3 +1,5 @@
+console.log("Formulario desarrollado por www.ignovacion.com");
+
 // Mostrar/ocultar secciones según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
     const tipo = this.value;
@@ -5,59 +7,61 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
     document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
 });
 
-// Función para leer NFC
-async function leerNFC(campoDestino, statusMsg) {
+// Función para leer NFC y actualizar el campo destino
+async function leerNFC(campoDestino) {
     if ('NDEFReader' in window) {
         try {
             const nfcReader = new NDEFReader();
             await nfcReader.scan();
-            document.getElementById(statusMsg).innerText = "Escaneando Tag NFC...";
+            console.log("Escaneando NFC... Acerca el tag al dispositivo.");
+
+            document.getElementById("status").innerText = "Escaneando NFC... Acerca el tag.";
 
             nfcReader.onreading = (event) => {
-                const nfcMessage = event.message.records[0];
-                const nfcData = new TextDecoder().decode(nfcMessage.data);
-                document.getElementById(campoDestino).value = nfcData;
-                document.getElementById(statusMsg).innerText = "Firma completada.";
+                console.log("Evento de lectura NFC recibido", event);
+
+                let nfcData = "";
+
+                // Iterar sobre los registros de NFC
+                for (const record of event.message.records) {
+                    const decoder = new TextDecoder();
+                    nfcData += decoder.decode(record.data);
+                }
+
+                // Mostrar los datos en el campo correspondiente
+                document.getElementById(campoDestino).value = nfcData.trim();
+                document.getElementById("status").innerText = "Lectura completada con éxito.";
+
+                console.log(`Datos leídos: ${nfcData}`);
             };
+
         } catch (error) {
             console.error("Error al leer NFC:", error);
-            document.getElementById(statusMsg).innerText = "Error al leer NFC. Intenta nuevamente.";
+            alert("Error al leer NFC. Intenta de nuevo.");
+            document.getElementById("status").innerText = "Error al leer NFC.";
         }
     } else {
-        alert("Tu navegador no soporta NFC.");
+        alert("Tu navegador no soporta NFC. Usa Google Chrome en Android.");
+        console.log("NFC no disponible en este navegador.");
     }
 }
 
-// Asociar los botones NFC
+// Asignar eventos a los botones de escanear
 document.getElementById("firmarResponsable").addEventListener("click", () => {
-    leerNFC("responsable", "status");
+    leerNFC("responsable");
 });
 
 document.getElementById("firmarCoordinador").addEventListener("click", () => {
-    leerNFC("coordinador", "status");
+    leerNFC("coordinador");
 });
 
-// Manejo del envío
-document.getElementById("formulario").addEventListener("submit", (event) => {
+// Envío del formulario
+document.getElementById("formulario").addEventListener("submit", function (event) {
     event.preventDefault();
-    const tipo = document.getElementById("tipoRendicion").value;
 
-    const datos = {
-        tipo,
-        programa: document.getElementById("programa")?.value || null,
-        actividad: document.getElementById("actividad")?.value || null,
-        fecha: document.getElementById("fecha")?.value || null,
-        colegio: document.getElementById("colegio")?.value || null,
-        estudiantes: document.getElementById("estudiantes")?.value || null,
-        apoderados: document.getElementById("apoderados")?.value || null,
-        asuntoGasto: document.getElementById("asuntoGasto")?.value || null,
-        valorGasto: document.getElementById("valorGasto")?.value || null,
-        responsable: document.getElementById("responsable")?.value || null,
-        coordinador: document.getElementById("coordinador").value,
-        correoResponsable: document.getElementById("correoResponsable")?.value || null,
-        correoCoordinador: document.getElementById("correoCoordinador").value,
-    };
-
-    console.log("Formulario enviado:", datos);
-    alert("Formulario enviado correctamente.");
+    document.body.innerHTML = `
+        <h1 style="text-align: center; color: #4CAF50;">Los datos rendidos se han enviado con éxito</h1>
+        <p style="text-align: center; color: #333;">Preparando el formulario para una nueva rendición...</p>
+    `;
+    setTimeout(() => window.location.reload(), 3000);
 });
