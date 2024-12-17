@@ -1,11 +1,11 @@
 console.log("Formulario desarrollado por www.ignovacion.com");
 
-// Mostrar/ocultar secciones según el tipo de rendición
+// Mostrar formulario según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
     const tipo = this.value;
     document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
     document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
-    mostrarMensaje("Rellena todos los campos y presiona Enviar.", "blue");
+    mostrarMensaje("Completa el formulario y presiona Enviar.", "blue");
 });
 
 // Función para leer NFC
@@ -29,25 +29,24 @@ async function leerNFC(campoDestino) {
     }
 }
 
-// Función para mostrar mensajes temporales
+// Función para mostrar mensajes
 function mostrarMensaje(mensaje, color) {
     const status = document.getElementById("status");
     status.style.color = color;
     status.innerText = mensaje;
 }
 
-// Botones de lectura NFC
+// Eventos de botones NFC
 document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
 document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
 
-// Envío del formulario a Google Apps Script
+// Enviar formulario a Google Apps Script
 document.getElementById("formulario").addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const tipo = document.getElementById("tipoRendicion").value;
     const formData = new FormData();
 
-    // Capturar datos específicos del tipo de rendición
     if (tipo === "voucher") {
         formData.append("tipo", "Rendición de Voucher");
         formData.append("programa", document.getElementById("programa").value);
@@ -65,7 +64,6 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
         formData.append("valor", document.getElementById("valorGasto").value);
     }
 
-    // Coordinador
     formData.append("coordinador", document.getElementById("coordinador").value);
     formData.append("correoCoordinador", document.getElementById("correoCoordinador").value);
 
