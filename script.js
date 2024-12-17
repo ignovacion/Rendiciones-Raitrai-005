@@ -1,46 +1,63 @@
+// Mostrar/ocultar secciones según el tipo de rendición
+document.getElementById("tipoRendicion").addEventListener("change", function () {
+    const tipo = this.value;
+    document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
+    document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
+});
+
 // Función para leer NFC
-async function leerNFC() {
+async function leerNFC(campoDestino, statusMsg) {
     if ('NDEFReader' in window) {
         try {
             const nfcReader = new NDEFReader();
             await nfcReader.scan();
-            document.getElementById("status").innerText = "Esperando datos del Tag NFC...";
+            document.getElementById(statusMsg).innerText = "Escaneando Tag NFC...";
 
             nfcReader.onreading = (event) => {
                 const nfcMessage = event.message.records[0];
                 const nfcData = new TextDecoder().decode(nfcMessage.data);
-                document.getElementById("nfc").value = nfcData;
-                document.getElementById("status").innerText = "Datos NFC leídos correctamente.";
+                document.getElementById(campoDestino).value = nfcData;
+                document.getElementById(statusMsg).innerText = "Firma completada.";
             };
         } catch (error) {
             console.error("Error al leer NFC:", error);
-            document.getElementById("status").innerText = "Error al leer NFC. Intenta nuevamente.";
+            document.getElementById(statusMsg).innerText = "Error al leer NFC. Intenta nuevamente.";
         }
     } else {
-        document.getElementById("status").innerText = "Tu navegador no soporta NFC.";
+        alert("Tu navegador no soporta NFC.");
     }
 }
 
-// Asociar la función al botón "Firmar"
-document.getElementById("firmarButton").addEventListener("click", leerNFC);
+// Asociar los botones NFC
+document.getElementById("firmarResponsable").addEventListener("click", () => {
+    leerNFC("responsable", "status");
+});
 
-// Manejar el envío del formulario
+document.getElementById("firmarCoordinador").addEventListener("click", () => {
+    leerNFC("coordinador", "status");
+});
+
+// Manejo del envío
 document.getElementById("formulario").addEventListener("submit", (event) => {
     event.preventDefault();
-    const programa = document.getElementById("programa").value;
-    const actividad = document.getElementById("actividad").value;
-    const fecha = document.getElementById("fecha").value;
-    const coordinador = document.getElementById("coordinador").value;
-    const colegio = document.getElementById("colegio").value;
-    const estudiantes = document.getElementById("estudiantes").value;
-    const apoderados = document.getElementById("apoderados").value;
-    const nfc = document.getElementById("nfc").value;
+    const tipo = document.getElementById("tipoRendicion").value;
 
-    if (!programa || !actividad || !fecha || !coordinador || !colegio || !estudiantes || !apoderados || !nfc) {
-        document.getElementById("status").innerText = "Por favor completa todos los campos.";
-        return;
-    }
+    const datos = {
+        tipo,
+        programa: document.getElementById("programa")?.value || null,
+        actividad: document.getElementById("actividad")?.value || null,
+        fecha: document.getElementById("fecha")?.value || null,
+        colegio: document.getElementById("colegio")?.value || null,
+        estudiantes: document.getElementById("estudiantes")?.value || null,
+        apoderados: document.getElementById("apoderados")?.value || null,
+        asuntoGasto: document.getElementById("asuntoGasto")?.value || null,
+        valorGasto: document.getElementById("valorGasto")?.value || null,
+        responsable: document.getElementById("responsable")?.value || null,
+        coordinador: document.getElementById("coordinador").value,
+        correoResponsable: document.getElementById("correoResponsable")?.value || null,
+        correoCoordinador: document.getElementById("correoCoordinador").value,
+    };
 
-    console.log("Formulario Enviado:", { programa, actividad, fecha, coordinador, colegio, estudiantes, apoderados, nfc });
-    document.getElementById("status").innerText = "Formulario enviado correctamente.";
+    console.log("Formulario enviado:", datos);
+    alert("Formulario enviado correctamente.");
 });
