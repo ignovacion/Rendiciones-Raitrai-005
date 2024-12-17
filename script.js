@@ -1,10 +1,26 @@
 console.log("Formulario desarrollado por www.ignovacion.com");
 
-// Mostrar/ocultar secciones según el tipo de rendición
+// Asegurarnos de ocultar todas las secciones al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("seccionVoucher").style.display = "none";
+    document.getElementById("seccionGastos").style.display = "none";
+    document.getElementById("formulario").style.display = "block";
+});
+
+// Mostrar la sección según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
     const tipo = this.value;
-    document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
-    document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
+
+    // Ocultar ambas secciones al cambiar
+    document.getElementById("seccionVoucher").style.display = "none";
+    document.getElementById("seccionGastos").style.display = "none";
+
+    // Mostrar solo la sección seleccionada
+    if (tipo === "voucher") {
+        document.getElementById("seccionVoucher").style.display = "block";
+    } else if (tipo === "gastos") {
+        document.getElementById("seccionGastos").style.display = "block";
+    }
 });
 
 // Función para leer NFC
