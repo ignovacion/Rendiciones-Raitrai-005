@@ -1,6 +1,3 @@
-console.log("Formulario desarrollado por www.ignovacion.com");
-
-// Mostrar/ocultar secciones según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
     const tipo = this.value;
     document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
