@@ -8,35 +8,55 @@
 </head>
 <body>
     <h1>VOUCHERS DE RAITRAI</h1>
+
     <form id="formulario">
-        <!-- Campos principales -->
-        <label for="programa">Programa:</label>
-        <input type="text" id="programa" required>
+        <!-- Selector inicial -->
+        <label for="tipoRendicion">Tipo de Rendición:</label>
+        <select id="tipoRendicion" required>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="voucher">Rendición de Voucher</option>
+            <option value="gastos">Rendición de Gastos</option>
+        </select>
 
-        <label for="actividad">Actividad:</label>
-        <input type="text" id="actividad" required>
+        <div id="seccionVoucher" style="display: none;">
+            <label for="programa">Programa:</label>
+            <input type="text" id="programa" required>
 
-        <label for="fecha">Fecha Actividad:</label>
-        <input type="date" id="fecha" required>
+            <label for="actividad">Actividad:</label>
+            <input type="text" id="actividad" required>
 
-        <label for="colegio">Colegio:</label>
-        <input type="text" id="colegio" required>
+            <label for="fecha">Fecha Actividad:</label>
+            <input type="date" id="fecha" required>
 
-        <label for="estudiantes">Cantidad de Estudiantes:</label>
-        <input type="number" id="estudiantes" required>
+            <label for="colegio">Colegio:</label>
+            <input type="text" id="colegio" required>
 
-        <label for="apoderados">Cantidad de Apoderados:</label>
-        <input type="number" id="apoderados" required>
+            <label for="estudiantes">Cantidad de Estudiantes:</label>
+            <input type="number" id="estudiantes" required>
 
-        <!-- Firma Responsable -->
-        <label for="responsable">Responsable Actividad:</label>
-        <input type="text" id="responsable" readonly placeholder="Acercar Tag NFC">
-        <button type="button" id="firmarResponsable">Firmar Responsable</button>
+            <label for="apoderados">Cantidad de Apoderados:</label>
+            <input type="number" id="apoderados" required>
 
-        <label for="correoResponsable">Correo del Responsable:</label>
-        <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com" required>
+            <label for="responsable">Responsable Actividad:</label>
+            <input type="text" id="responsable" readonly placeholder="Acercar Tag NFC">
+            <button type="button" id="firmarResponsable">Firmar Responsable</button>
 
-        <!-- Firma Coordinador -->
+            <label for="correoResponsable">Correo del Responsable:</label>
+            <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com" required>
+        </div>
+
+        <div id="seccionGastos" style="display: none;">
+            <label for="asuntoGasto">Asunto del Gasto:</label>
+            <input type="text" id="asuntoGasto" required>
+
+            <label for="valorGasto">Valor del Gasto:</label>
+            <input type="number" id="valorGasto" placeholder="Ej: 50000" required>
+
+            <label for="imagenGasto">Subir Boleta/Factura:</label>
+            <input type="file" id="imagenGasto" accept="image/*" required>
+        </div>
+
+        <!-- Firma del Coordinador -->
         <label for="coordinador">Coordinador de Grupo:</label>
         <input type="text" id="coordinador" readonly placeholder="Acercar Tag NFC">
         <button type="button" id="firmarCoordinador">Firmar Coordinador</button>
@@ -44,7 +64,6 @@
         <label for="correoCoordinador">Correo del Coordinador:</label>
         <input type="email" id="correoCoordinador" placeholder="correo@ejemplo.com" required>
 
-        <!-- Botón para enviar -->
         <button type="submit" id="enviar">Enviar</button>
     </form>
     <p id="status"></p>
