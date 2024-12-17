@@ -1,3 +1,6 @@
+console.log("Formulario desarrollado por www.ignovacion.com");
+
+// Mostrar/ocultar secciones según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
     const tipo = this.value;
     document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
@@ -30,36 +33,6 @@ document.getElementById("firmarResponsable").addEventListener("click", () => {
 
 document.getElementById("firmarCoordinador").addEventListener("click", () => {
     leerNFC("coordinador");
-});
-
-// Extraer texto de imagen con Tesseract.js
-document.getElementById("extraerTexto").addEventListener("click", () => {
-    const inputImagen = document.getElementById("imagenGasto");
-    const archivo = inputImagen.files[0];
-
-    if (!archivo) {
-        alert("Por favor, selecciona una imagen.");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        Tesseract.recognize(
-            e.target.result,
-            'spa',
-            { logger: info => console.log(info) }
-        ).then(({ data: { text } }) => {
-            const valorDetectado = text.match(/\d+(\.\d{2})?/);
-            const asuntoDetectado = text.split("\n")[0] || "Gasto identificado";
-            document.getElementById("asuntoGasto").value = asuntoDetectado;
-            document.getElementById("valorGasto").value = valorDetectado ? valorDetectado[0] : "";
-            alert("Texto extraído y campos completados.");
-        }).catch(error => {
-            alert("No se pudo procesar la imagen.");
-            console.error(error);
-        });
-    };
-    reader.readAsDataURL(archivo);
 });
 
 // Envío del formulario
