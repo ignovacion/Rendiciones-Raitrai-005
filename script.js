@@ -38,11 +38,13 @@ document.getElementById("firmarCoordinador").addEventListener("click", () => {
     leerNFC("coordinador", "status");
 });
 
-// Manejo del envío
+// Manejo del envío del formulario
 document.getElementById("formulario").addEventListener("submit", (event) => {
     event.preventDefault();
+
     const tipo = document.getElementById("tipoRendicion").value;
 
+    // Simular el envío de datos
     const datos = {
         tipo,
         programa: tipo === "voucher" ? document.getElementById("programa").value : document.getElementById("programaGasto").value,
@@ -56,6 +58,16 @@ document.getElementById("formulario").addEventListener("submit", (event) => {
         correoCoordinador: document.getElementById("correoCoordinador").value,
     };
 
-    console.log("Formulario enviado:", datos);
-    alert("Formulario enviado correctamente.");
+    console.log("Datos enviados:", datos);
+
+    // Mostrar mensaje de confirmación
+    document.body.innerHTML = `
+        <h1 style="text-align: center; color: #4CAF50;">Los datos rendidos se han enviado con éxito</h1>
+        <p style="text-align: center; color: #333;">Preparando el formulario para una nueva rendición...</p>
+    `;
+
+    // Reiniciar el formulario después de 3 segundos
+    setTimeout(() => {
+        window.location.reload();
+    }, 3000);
 });
