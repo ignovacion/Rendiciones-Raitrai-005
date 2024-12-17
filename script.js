@@ -5,6 +5,7 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
     const tipo = this.value;
     document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
     document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
+    mostrarMensaje("Cuando estén todos los campos rellenos, presiona Enviar.", "blue");
 });
 
 // Función para leer NFC y actualizar un campo
@@ -14,6 +15,7 @@ async function leerNFC(campoDestino) {
             const nfcReader = new NDEFReader();
             await nfcReader.scan();
             console.log("Escaneando NFC... Acerca el tag al dispositivo.");
+            mostrarMensaje("Escaneando NFC... Acerca el tag al dispositivo.", "orange");
 
             nfcReader.onreading = (event) => {
                 let nfcData = "";
@@ -22,7 +24,10 @@ async function leerNFC(campoDestino) {
                     nfcData += decoder.decode(record.data);
                 }
                 document.getElementById(campoDestino).value = nfcData.trim();
-                mostrarMensaje("Lectura completada con éxito.", "green");
+                mostrarMensaje("Lectura completada con éxito. Completa los demás campos y presiona Enviar.", "green");
+
+                // Cerrar el proceso de lectura
+                nfcReader.onreading = null; // Detener la lectura
             };
         } catch (error) {
             console.error("Error al leer NFC:", error);
@@ -33,11 +38,17 @@ async function leerNFC(campoDestino) {
     }
 }
 
-// Función para mostrar mensajes
+// Función para mostrar mensajes temporales
 function mostrarMensaje(mensaje, color) {
     const status = document.getElementById("status");
     status.style.color = color;
     status.innerText = mensaje;
+
+    // Ocultar mensaje después de 5 segundos
+    setTimeout(() => {
+        status.innerText = "Cuando estén todos los campos rellenos, presiona Enviar.";
+        status.style.color = "blue";
+    }, 5000);
 }
 
 // Eventos de botones NFC
@@ -80,6 +91,8 @@ document.getElementById("formulario").addEventListener("submit", (event) => {
         formData.append("imagenGasto", fileInput.files[0]);
     }
 
+    mostrarMensaje("Enviando datos... Por favor espera.", "orange");
+
     // Enviar datos al Web App de Google Apps Script
     fetch("https://script.google.com/macros/s/AKfycbz1rrJ3CasBVxGQU9mdlCDXc8fDxcGd93ceA5RTn2OHzlDZKPkHG-KuX06eP9ee6xjocg/exec", {
         method: "POST",
@@ -88,7 +101,6 @@ document.getElementById("formulario").addEventListener("submit", (event) => {
         .then((response) => response.text())
         .then((result) => {
             console.log(result);
-            mostrarMensaje("Los datos rendidos se han enviado con éxito.", "green");
             document.body.innerHTML = `
                 <h1 style="text-align: center; color: #4CAF50;">Los datos rendidos se han enviado con éxito</h1>
                 <p style="text-align: center; color: #333;">Preparando el formulario para una nueva rendición...</p>
