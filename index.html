@@ -38,9 +38,9 @@
             <label for="apoderados">Cantidad de Apoderados:</label>
             <input type="number" id="apoderados" required>
 
+            <button type="button" id="firmarResponsable">Escanear TAG Responsable</button>
             <label for="responsable">Responsable Actividad:</label>
             <input type="text" id="responsable" readonly placeholder="Firma Electrónica de Responsable de Actividad">
-            <button type="button" id="firmarResponsable">Escanear TAG Responsable</button>
 
             <label for="correoResponsable">Correo del Responsable:</label>
             <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com" required>
@@ -68,9 +68,9 @@
         </div>
 
         <!-- Firma del Coordinador -->
+        <button type="button" id="firmarCoordinador">Escanear TAG Coordinador</button>
         <label for="coordinador">Coordinador de Grupo:</label>
         <input type="text" id="coordinador" readonly placeholder="Firma Electrónica de Coordinador de Grupo">
-        <button type="button" id="firmarCoordinador">Escanear TAG Coordinador</button>
 
         <label for="correoCoordinador">Correo del Coordinador:</label>
         <input type="email" id="correoCoordinador" placeholder="correo@ejemplo.com" required>
@@ -78,6 +78,13 @@
         <button type="submit" id="enviar">Enviar</button>
     </form>
     <p id="status"></p>
+
+    <!-- Marca de creación -->
+    <footer style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
+        <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank" style="color: #4CAF50; text-decoration: none;">
+            www.ignovacion.com
+        </a></p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
