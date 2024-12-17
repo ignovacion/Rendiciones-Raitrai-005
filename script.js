@@ -1,21 +1,23 @@
-console.log("Prueba de envío de correos con EmailJS.");
+console.log("Formulario desarrollado por www.ignovacion.com");
 
 // Inicializar EmailJS
 (function () {
-    try {
-        emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
-        console.log("EmailJS inicializado correctamente.");
-    } catch (error) {
-        console.error("Error al inicializar EmailJS:", error);
-        alert("Error al configurar EmailJS.");
-    }
+    emailjs.init("WoF5qDCeRay2IRCrH"); // Public Key de EmailJS
+    console.log("EmailJS inicializado correctamente.");
 })();
+
+// Función para mostrar mensajes en pantalla
+function mostrarMensaje(mensaje, color) {
+    const status = document.getElementById("status");
+    status.style.color = color;
+    status.innerText = mensaje;
+}
 
 // Envío del formulario
 document.getElementById("formulario").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // Datos del formulario
+    // Capturar datos del formulario
     const tipo = document.getElementById("tipoRendicion").value;
     const templateParams = {
         tipo: tipo,
@@ -26,22 +28,23 @@ document.getElementById("formulario").addEventListener("submit", function (event
         correoResponsable: document.getElementById("correoResponsable")?.value || "No aplica",
         coordinador: document.getElementById("coordinador").value,
         correoCoordinador: document.getElementById("correoCoordinador").value,
-        asuntoGasto: document.getElementById("asuntoGasto")?.value || "",
-        valorGasto: document.getElementById("valorGasto")?.value || "",
     };
 
-    console.log("Enviando datos:", templateParams);
+    console.log("Enviando datos a EmailJS:", templateParams);
 
-    // Enviar correo a través de EmailJS
+    // Enviar los datos con EmailJS
     emailjs.send("service_4u5obts", "template_5fi1hjp", templateParams)
         .then(function (response) {
             console.log("Correo enviado exitosamente:", response.status, response.text);
-            document.getElementById("status").style.color = "green";
-            document.getElementById("status").innerText = "Correo enviado con éxito.";
-            alert("Los datos se enviaron correctamente a los correos.");
+            mostrarMensaje("¡Los datos se han enviado con éxito!", "green");
+
+            // Limpiar el formulario después del envío
+            setTimeout(() => {
+                document.getElementById("formulario").reset();
+                document.getElementById("status").innerText = "";
+            }, 3000);
         }, function (error) {
-            console.error("Error al enviar el correo:", error);
-            document.getElementById("status").style.color = "red";
-            document.getElementById("status").innerText = "Error al enviar el correo. Intenta de nuevo.";
+            console.error("Error al enviar el formulario:", error);
+            mostrarMensaje("Error al enviar los datos. Inténtalo de nuevo.", "red");
         });
 });
