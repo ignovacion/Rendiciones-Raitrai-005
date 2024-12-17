@@ -57,3 +57,4 @@ function validarYEnviarFormulario(nfcTagData) {
         $w("#errorText").text = "El Tag NFC no es válido.";
     }
 }
+
