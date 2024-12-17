@@ -1,91 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rendiciones de Raitrai</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>Rendiciones de Raitrai</h1>
+console.log("Formulario desarrollado por www.ignovacion.com");
 
-    <form id="formulario">
-        <!-- Selector inicial -->
-        <label for="tipoRendicion">Tipo de Rendición:</label>
-        <select id="tipoRendicion" required>
-            <option value="" disabled selected>Selecciona una opción</option>
-            <option value="voucher">Rendición de Voucher</option>
-            <option value="gastos">Rendición de Gastos</option>
-        </select>
+// Mostrar/ocultar secciones según el tipo de rendición
+document.getElementById("tipoRendicion").addEventListener("change", function () {
+    const tipo = this.value;
+    document.getElementById("seccionVoucher").style.display = tipo === "voucher" ? "block" : "none";
+    document.getElementById("seccionGastos").style.display = tipo === "gastos" ? "block" : "none";
+});
 
-        <!-- Sección para Rendición de Voucher -->
-        <div id="seccionVoucher" style="display: none;">
-            <label for="programa">Programa:</label>
-            <input type="text" id="programa" required>
+// Función para leer NFC y actualizar el campo destino
+async function leerNFC(campoDestino) {
+    if ('NDEFReader' in window) {
+        try {
+            const nfcReader = new NDEFReader();
+            await nfcReader.scan();
+            console.log("Escaneando NFC... Acerca el tag al dispositivo.");
 
-            <label for="actividad">Actividad:</label>
-            <input type="text" id="actividad" required>
+            document.getElementById("status").innerText = "Escaneando NFC... Acerca el tag.";
 
-            <label for="fecha">Fecha Actividad:</label>
-            <input type="date" id="fecha" required>
+            nfcReader.onreading = (event) => {
+                console.log("Evento de lectura NFC recibido", event);
 
-            <label for="colegio">Colegio:</label>
-            <input type="text" id="colegio" required>
+                let nfcData = "";
 
-            <label for="estudiantes">Cantidad de Estudiantes:</label>
-            <input type="number" id="estudiantes" required>
+                // Iterar sobre los registros de NFC
+                for (const record of event.message.records) {
+                    const decoder = new TextDecoder();
+                    nfcData += decoder.decode(record.data);
+                }
 
-            <label for="apoderados">Cantidad de Apoderados:</label>
-            <input type="number" id="apoderados" required>
+                // Mostrar los datos en el campo correspondiente
+                document.getElementById(campoDestino).value = nfcData.trim();
+                document.getElementById("status").innerText = "Lectura completada con éxito.";
 
-            <button type="button" id="firmarResponsable">Escanear TAG Responsable</button>
-            <label for="responsable">Responsable Actividad:</label>
-            <input type="text" id="responsable" readonly placeholder="Firma Electrónica de Responsable de Actividad">
+                console.log(`Datos leídos: ${nfcData}`);
+            };
 
-            <label for="correoResponsable">Correo del Responsable:</label>
-            <input type="email" id="correoResponsable" placeholder="correo@ejemplo.com" required>
-        </div>
+        } catch (error) {
+            console.error("Error al leer NFC:", error);
+            alert("Error al leer NFC. Intenta de nuevo.");
+            document.getElementById("status").innerText = "Error al leer NFC.";
+        }
+    } else {
+        alert("Tu navegador no soporta NFC. Usa Google Chrome en Android.");
+        console.log("NFC no disponible en este navegador.");
+    }
+}
 
-        <!-- Sección para Rendición de Gastos -->
-        <div id="seccionGastos" style="display: none;">
-            <label for="programaGasto">Programa:</label>
-            <input type="text" id="programaGasto" required>
+// Asignar eventos a los botones de escanear
+document.getElementById("firmarResponsable").addEventListener("click", () => {
+    leerNFC("responsable");
+});
 
-            <label for="colegioGasto">Colegio:</label>
-            <input type="text" id="colegioGasto" required>
+document.getElementById("firmarCoordinador").addEventListener("click", () => {
+    leerNFC("coordinador");
+});
 
-            <label for="fechaGasto">Fecha del Gasto:</label>
-            <input type="date" id="fechaGasto" required>
+// Envío del formulario
+document.getElementById("formulario").addEventListener("submit", function (event) {
+    event.preventDefault();
 
-            <label for="asuntoGasto">Asunto del Gasto:</label>
-            <input type="text" id="asuntoGasto" required>
-
-            <label for="valorGasto">Valor del Gasto:</label>
-            <input type="number" id="valorGasto" placeholder="Ej: 50000" required>
-
-            <label for="imagenGasto">Subir Boleta/Factura:</label>
-            <input type="file" id="imagenGasto" accept="image/*" required>
-        </div>
-
-        <!-- Firma del Coordinador -->
-        <button type="button" id="firmarCoordinador">Escanear TAG Coordinador</button>
-        <label for="coordinador">Coordinador de Grupo:</label>
-        <input type="text" id="coordinador" readonly placeholder="Firma Electrónica de Coordinador de Grupo">
-
-        <label for="correoCoordinador">Correo del Coordinador:</label>
-        <input type="email" id="correoCoordinador" placeholder="correo@ejemplo.com" required>
-
-        <button type="submit" id="enviar">Enviar</button>
-    </form>
-    <p id="status"></p>
-
-    <!-- Marca de creación -->
-    <footer style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
-        <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank" style="color: #4CAF50; text-decoration: none;">
-            www.ignovacion.com
-        </a></p>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    document.body.innerHTML = `
+        <h1 style="text-align: center; color: #4CAF50;">Los datos rendidos se han enviado con éxito</h1>
+        <p style="text-align: center; color: #333;">Preparando el formulario para una nueva rendición...</p>
+    `;
+    setTimeout(() => window.location.reload(), 3000);
+});
