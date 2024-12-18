@@ -1,6 +1,6 @@
 console.log("Formulario desarrollado por www.ignovacion.com");
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzSGjpCEmND1qlU0fR4FjZxXzr34DCT0tJemnWg00Vpv_qvsuJyKB6-OfcSvtqQxsreFA/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbzSGjpCEmND1qlU0fR4FjZxXzr34DCT0tJemnWg00Vpv_qvsuJyKB6-OfcSvtqQxsreFA/exec"; // Reemplazado YOUR_SCRIPT_ID por tu ID real.
 
 // Mostrar/ocultar secciones según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
@@ -31,7 +31,7 @@ async function leerNFC(campoDestino) {
     }
 }
 
-// Mostrar mensajes
+// Mostrar mensajes en la interfaz
 function mostrarMensaje(mensaje, color) {
     const status = document.getElementById("status");
     status.style.color = color;
@@ -79,8 +79,9 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
     try {
         const response = await fetch(scriptURL, {
             method: "POST",
-            body: formData
+            body: formData,
         });
+
         const result = await response.text();
         console.log("Respuesta del servidor:", result);
         alert(result);
