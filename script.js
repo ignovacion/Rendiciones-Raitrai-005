@@ -59,6 +59,8 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
         formData.append("actividad", document.getElementById("actividad").value || "");
         formData.append("fecha", document.getElementById("fecha").value || "");
         formData.append("colegio", document.getElementById("colegio").value || "");
+        formData.append("estudiantes", document.getElementById("estudiantes").value || "");
+        formData.append("apoderados", document.getElementById("apoderados").value || "");
         formData.append("responsable", document.getElementById("responsable").value || "");
         formData.append("correoResponsable", document.getElementById("correoResponsable").value || "");
     } else if (tipo === "gastos") {
