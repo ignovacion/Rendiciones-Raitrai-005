@@ -11,7 +11,7 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
 });
 
 // Función para leer NFC
-async function leerNFC(campoDestino) {
+async function leerNFC(tipo) {
     if ("NDEFReader" in window) {
         try {
             const nfcReader = new NDEFReader();
@@ -21,14 +21,20 @@ async function leerNFC(campoDestino) {
             nfcReader.onreading = (event) => {
                 const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
 
-                // Asignar datos solo al campo destino proporcionado
-                for (let i = 0; i < lines.length; i++) {
-                    const field = campoDestino[i];
-                    if (field) {
-                        document.getElementById(field).value = lines[i] || "";
-                    }
+                // Asignar datos a los campos correspondientes según el tipo de TAG
+                if (tipo === "coordinador") {
+                    document.getElementById("coordinador").value = lines[0] || "";
+                    document.getElementById("codigoCoordinador").value = lines[1] || "";
+                    document.getElementById("colegio").value = lines[2] || "";
+                    document.getElementById("programa").value = lines[3] || "";
+                    document.getElementById("estudiantes").value = lines[4] || "";
+                    document.getElementById("apoderados").value = lines[5] || "";
+                    document.getElementById("correoCoordinador").value = lines[6] || "";
+                } else if (tipo === "responsable") {
+                    document.getElementById("responsable").value = lines[0] || "";
+                    document.getElementById("actividad").value = lines[1] || "";
+                    document.getElementById("correoResponsable").value = lines[2] || "";
                 }
-
                 mostrarMensaje("Lectura completada con éxito.", "green");
             };
         } catch (error) {
@@ -47,12 +53,8 @@ function mostrarMensaje(mensaje, color) {
 }
 
 // Eventos de lectura NFC
-document.getElementById("firmarCoordinador").addEventListener("click", () =>
-    leerNFC(["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "correoCoordinador"])
-);
-document.getElementById("firmarResponsable").addEventListener("click", () =>
-    leerNFC(["responsable", "actividad", "correoResponsable"])
-);
+document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
+document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
 
 // Enviar formulario
 document.getElementById("formulario").addEventListener("submit", async (event) => {
