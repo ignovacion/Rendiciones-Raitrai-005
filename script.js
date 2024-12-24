@@ -1,6 +1,6 @@
 console.log("Formulario desarrollado por www.ignovacion.com");
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzSGjpCEmND1qlU0fR4FjZxXzr34DCT0tJemnWg00Vpv_qvsuJyKB6-OfcSvtqQxsreFA/exec"; // Reemplazado YOUR_SCRIPT_ID por tu ID real.
+const scriptURL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // Reemplaza YOUR_SCRIPT_ID con tu Script ID.
 
 // Mostrar/ocultar secciones según el tipo de rendición
 document.getElementById("tipoRendicion").addEventListener("change", function () {
@@ -11,7 +11,7 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
 });
 
 // Función para leer NFC
-async function leerNFC(campoDestino) {
+async function leerNFC(campoDestino, tipo) {
     if ("NDEFReader" in window) {
         try {
             const nfcReader = new NDEFReader();
@@ -19,8 +19,20 @@ async function leerNFC(campoDestino) {
             mostrarMensaje("Escaneando NFC... Acerca el tag al dispositivo.", "orange");
 
             nfcReader.onreading = (event) => {
-                const nfcData = new TextDecoder().decode(event.message.records[0].data);
-                document.getElementById(campoDestino).value = nfcData.trim();
+                const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
+                if (tipo === "coordinador") {
+                    document.getElementById("coordinador").value = lines[0] || "";
+                    document.getElementById("codigoCoordinador").value = lines[1] || "";
+                    document.getElementById("colegio").value = lines[2] || "";
+                    document.getElementById("programa").value = lines[3] || "";
+                    document.getElementById("estudiantes").value = lines[4] || "";
+                    document.getElementById("apoderados").value = lines[5] || "";
+                    document.getElementById("correoCoordinador").value = lines[6] || "";
+                } else if (tipo === "responsable") {
+                    document.getElementById("responsable").value = lines[0] || "";
+                    document.getElementById("actividad").value = lines[1] || "";
+                    document.getElementById("correoResponsable").value = lines[2] || "";
+                }
                 mostrarMensaje("Lectura completada con éxito.", "green");
             };
         } catch (error) {
@@ -31,7 +43,7 @@ async function leerNFC(campoDestino) {
     }
 }
 
-// Mostrar mensajes en la interfaz
+// Mostrar mensajes
 function mostrarMensaje(mensaje, color) {
     const status = document.getElementById("status");
     status.style.color = color;
@@ -39,60 +51,38 @@ function mostrarMensaje(mensaje, color) {
 }
 
 // Eventos de lectura NFC
-document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
-document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
+document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC(null, "coordinador"));
+document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC(null, "responsable"));
 
-// Enviar el formulario
+// Enviar formulario
 document.getElementById("formulario").addEventListener("submit", async (event) => {
     event.preventDefault();
-
     const tipo = document.getElementById("tipoRendicion").value;
     const formData = new FormData();
-
-    // Datos comunes
     formData.append("tipo", tipo);
-    formData.append("coordinador", document.getElementById("coordinador").value || "");
-    formData.append("correoCoordinador", document.getElementById("correoCoordinador").value || "");
 
     if (tipo === "voucher") {
-        formData.append("programa", document.getElementById("programa").value || "");
-        formData.append("actividad", document.getElementById("actividad").value || "");
-        formData.append("fecha", document.getElementById("fecha").value || "");
-        formData.append("colegio", document.getElementById("colegio").value || "");
-        formData.append("estudiantes", document.getElementById("estudiantes").value || "");
-        formData.append("apoderados", document.getElementById("apoderados").value || "");
-        formData.append("responsable", document.getElementById("responsable").value || "");
-        formData.append("correoResponsable", document.getElementById("correoResponsable").value || "");
+        ["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "responsable", "actividad", "correoResponsable"].forEach(id => {
+            formData.append(id, document.getElementById(id).value || "");
+        });
     } else if (tipo === "gastos") {
-        formData.append("programa", document.getElementById("programaGasto").value || "");
-        formData.append("colegio", document.getElementById("colegioGasto").value || "");
-        formData.append("fecha", document.getElementById("fechaGasto").value || "");
-        formData.append("asunto", document.getElementById("asuntoGasto").value || "");
-        formData.append("valor", document.getElementById("valorGasto").value || "");
-
+        ["coordinadorGasto", "codigoCoordinadorGasto", "colegioGasto", "programaGasto", "fechaGasto", "asuntoGasto", "valorGasto"].forEach(id => {
+            formData.append(id, document.getElementById(id).value || "");
+        });
         const fileInput = document.getElementById("imagenGasto");
-        if (fileInput && fileInput.files.length > 0) {
+        if (fileInput.files.length > 0) {
             formData.append("imagenGasto", fileInput.files[0]);
         }
     }
 
     try {
-        const response = await fetch(scriptURL, {
-            method: "POST",
-            body: formData,
-        });
-
+        const response = await fetch(scriptURL, { method: "POST", body: formData });
         const result = await response.text();
-        console.log("Respuesta del servidor:", result);
-        alert(result);
-
-        document.body.innerHTML = `
-            <h1 style="text-align: center; color: #4CAF50;">Los datos se enviaron correctamente.</h1>
-            <p style="text-align: center;">Preparando el formulario para una nueva rendición...</p>
-        `;
-        setTimeout(() => window.location.reload(), 3000);
+        console.log(result);
+        alert("Datos enviados correctamente.");
+        window.location.reload();
     } catch (error) {
         console.error("Error al enviar los datos:", error);
-        mostrarMensaje("Hubo un error al enviar los datos. Intenta nuevamente.", "red");
+        mostrarMensaje("Error al enviar los datos. Intenta nuevamente.", "red");
     }
 });
