@@ -22,34 +22,17 @@ async function leerNFC(tipo) {
                 const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
 
                 if (tipo === "coordinador") {
-                    // Verificar si ya se han leído los datos del coordinador
-                    if (document.getElementById("coordinador").readOnly) {
-                        mostrarMensaje("Los datos del coordinador ya han sido leídos.", "red");
-                        return;
-                    }
-                    // Asignar datos a los campos del coordinador
+                    if (document.getElementById("coordinador").readOnly) return;
                     document.getElementById("coordinador").value = lines[0] || "";
                     document.getElementById("codigoCoordinador").value = lines[1] || "";
                     document.getElementById("colegio").value = lines[2] || "";
                     document.getElementById("programa").value = lines[3] || "";
-                    document.getElementById("estudiantes").value = lines[4] || "";
-                    document.getElementById("apoderados").value = lines[5] || "";
-                    document.getElementById("correoCoordinador").value = lines[6] || "";
-
-                    // Bloquear campos
                     bloquearCampos("coordinador");
                 } else if (tipo === "responsable") {
-                    // Verificar si ya se han leído los datos del responsable
-                    if (document.getElementById("responsable").readOnly) {
-                        mostrarMensaje("Los datos del responsable ya han sido leídos.", "red");
-                        return;
-                    }
-                    // Asignar datos a los campos del responsable
+                    if (document.getElementById("responsable").readOnly) return;
                     document.getElementById("responsable").value = lines[0] || "";
                     document.getElementById("actividad").value = lines[1] || "";
                     document.getElementById("correoResponsable").value = lines[2] || "";
-
-                    // Bloquear campos
                     bloquearCampos("responsable");
                 }
                 mostrarMensaje("Lectura completada con éxito.", "green");
@@ -64,29 +47,14 @@ async function leerNFC(tipo) {
 
 // Función para bloquear campos
 function bloquearCampos(tipo) {
-    const fieldsToBlock = tipo === "coordinador" ? [
-        "coordinador",
-        "codigoCoordinador",
-        "colegio",
-        "programa",
-        "estudiantes",
-        "apoderados",
-        "correoCoordinador"
-    ] : [
-        "responsable",
-        "actividad",
-        "correoResponsable"
-    ];
+    const fieldsToBlock = tipo === "coordinador"
+        ? ["coordinador", "codigoCoordinador", "colegio", "programa"]
+        : ["responsable", "actividad", "correoResponsable"];
 
-    fieldsToBlock.forEach(id => {
-        const field = document.getElementById(id);
-        if (field) {
-            field.readOnly = true;
-        }
-    });
+    fieldsToBlock.forEach(id => document.getElementById(id).readOnly = true);
 }
 
-// Mostrar mensajes en la interfaz
+// Mostrar mensajes
 function mostrarMensaje(mensaje, color) {
     const status = document.getElementById("status");
     status.style.color = color;
@@ -107,7 +75,7 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
     formData.append("tipo", tipo);
 
     if (tipo === "voucher") {
-        ["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "correoCoordinador", "responsable", "actividad", "correoResponsable", "fecha"].forEach(id => {
+        ["coordinador", "codigoCoordinador", "colegio", "programa", "responsable", "actividad", "correoResponsable", "fecha", "estudiantes", "apoderados"].forEach(id => {
             formData.append(id, document.getElementById(id).value || "");
         });
     } else if (tipo === "gastos") {
@@ -121,17 +89,11 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
     }
 
     try {
-        const response = await fetch(scriptURL, {
-            method: "POST",
-            body: formData,
-        });
-
+        const response = await fetch(scriptURL, { method: "POST", body: formData });
         const result = await response.text();
-        console.log(result);
-        alert("Datos enviados correctamente.");
+        alert(result);
         window.location.reload();
     } catch (error) {
-        console.error("Error al enviar los datos:", error);
         mostrarMensaje("Error al enviar los datos. Intenta nuevamente.", "red");
     }
 });
