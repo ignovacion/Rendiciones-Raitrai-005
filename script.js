@@ -29,11 +29,17 @@ async function leerNFC(tipo) {
             mostrarMensaje("Escaneando NFC... Acerca el tag al dispositivo.", "orange");
 
             nfcReader.onreading = (event) => {
+                console.log("Datos leídos del TAG NFC:", event.message.records);
                 const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
                 asignarCamposNFC(tipo, lines);
             };
+
+            nfcReader.onreadingerror = () => {
+                mostrarMensaje("Error al leer el TAG NFC. Inténtalo nuevamente.", "red");
+            };
         } catch (error) {
-            mostrarMensaje("Error al leer NFC: " + error, "red");
+            console.error("Error durante la lectura NFC:", error);
+            mostrarMensaje("Error al leer NFC: " + error.message, "red");
         }
     } else {
         alert("NFC no soportado en este navegador. Usa Chrome en Android.");
@@ -42,19 +48,20 @@ async function leerNFC(tipo) {
 
 // Asignar los datos leídos
 function asignarCamposNFC(tipo, datos) {
+    console.log(`Asignando datos para: ${tipo}`);
     if (tipo === "coordinador") {
-        document.getElementById("coordinador").value = datos[0];
-        document.getElementById("codigoCoordinador").value = datos[1];
-        document.getElementById("colegio").value = datos[2];
-        document.getElementById("programa").value = datos[3];
-        document.getElementById("estudiantes").value = datos[4];
-        document.getElementById("apoderados").value = datos[5];
-        document.getElementById("correoCoordinador").value = datos[6];
+        document.getElementById("coordinador").value = datos[0] || "N/A";
+        document.getElementById("codigoCoordinador").value = datos[1] || "N/A";
+        document.getElementById("colegio").value = datos[2] || "N/A";
+        document.getElementById("programa").value = datos[3] || "N/A";
+        document.getElementById("estudiantes").value = datos[4] || "N/A";
+        document.getElementById("apoderados").value = datos[5] || "N/A";
+        document.getElementById("correoCoordinador").value = datos[6] || "N/A";
         document.getElementById("seleccionarRendicion").style.display = "block";
     } else if (tipo === "responsable") {
-        document.getElementById("responsable").value = datos[0];
-        document.getElementById("actividad").value = datos[1];
-        document.getElementById("correoResponsable").value = datos[2];
+        document.getElementById("responsable").value = datos[0] || "N/A";
+        document.getElementById("actividad").value = datos[1] || "N/A";
+        document.getElementById("correoResponsable").value = datos[2] || "N/A";
     }
     mostrarMensaje("Lectura completada con éxito.", "green");
 }
@@ -70,3 +77,4 @@ function mostrarMensaje(mensaje, color) {
 document.getElementById("enviar").addEventListener("click", () => {
     alert("Formulario enviado correctamente.");
 });
+
