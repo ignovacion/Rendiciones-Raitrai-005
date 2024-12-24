@@ -3,75 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFC Raitrai 2.0</title>
+    <title>NFC Raitrai 1.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>NFC Raitrai 2.0</h1>
+    <h1>NFC Raitrai 1.0</h1>
 
-    <!-- Escaneo del Coordinador -->
-    <div id="identificarCoordinador">
-        <h3>Identificación del Coordinador</h3>
-        <button type="button" id="leerCoordinador">Leer TAG Coordinador</button>
-        <label for="coordinador">Nombre del Coordinador:</label>
-        <input type="text" id="coordinador" readonly>
-        <label for="codigoCoordinador">Código del Coordinador:</label>
-        <input type="text" id="codigoCoordinador" readonly>
-        <label for="colegio">Colegio:</label>
-        <input type="text" id="colegio" readonly>
-        <label for="programa">Programa:</label>
-        <input type="text" id="programa" readonly>
-        <label for="estudiantes">Cantidad de Estudiantes:</label>
-        <input type="number" id="estudiantes" readonly>
-        <label for="apoderados">Cantidad de Apoderados:</label>
-        <input type="number" id="apoderados" readonly>
-        <label for="correoCoordinador">Correo Electrónico:</label>
-        <input type="email" id="correoCoordinador" readonly>
-    </div>
-
-    <!-- Selección de tipo de rendición -->
-    <div id="seleccionarRendicion" style="display: none;">
-        <h3>Seleccionar Tipo de Rendición</h3>
+    <form id="formulario">
         <label for="tipoRendicion">Tipo de Rendición:</label>
         <select id="tipoRendicion" required>
             <option value="" disabled selected>Selecciona una opción</option>
             <option value="voucher">Rendición de Voucher</option>
             <option value="gastos">Rendición de Gastos</option>
         </select>
-    </div>
 
-    <!-- Sección Voucher -->
-    <div id="seccionVoucher" class="seccion" style="display: none;">
-        <h3>Rendición de Voucher</h3>
-        <button type="button" id="leerResponsable">Leer TAG Responsable</button>
-        <label for="responsable">Nombre del Responsable:</label>
-        <input type="text" id="responsable" readonly>
-        <label for="actividad">Actividad:</label>
-        <input type="text" id="actividad" readonly>
-        <label for="correoResponsable">Correo del Responsable:</label>
-        <input type="email" id="correoResponsable" readonly>
-        <label for="fecha">Fecha de la Actividad:</label>
-        <input type="date" id="fecha">
-    </div>
+        <!-- Sección Voucher -->
+        <div id="seccionVoucher" style="display: none;">
+            <button type="button" id="firmarCoordinador">Leer TAG Coordinador</button>
+            <input type="text" id="coordinador" readonly placeholder="Nombre del Coordinador">
+            <input type="text" id="colegio" readonly placeholder="Colegio">
+            <input type="text" id="programa" readonly placeholder="Programa">
+            <input type="number" id="estudiantes" placeholder="Cantidad de Estudiantes">
+            <input type="number" id="apoderados" placeholder="Cantidad de Apoderados">
+            <input type="email" id="correoCoordinador" readonly placeholder="Correo del Coordinador">
 
-    <!-- Sección Gastos -->
-    <div id="seccionGastos" class="seccion" style="display: none;">
-        <h3>Rendición de Gastos</h3>
-        <label for="fechaGasto">Fecha del Gasto:</label>
-        <input type="date" id="fechaGasto">
-        <label for="asuntoGasto">Asunto del Gasto:</label>
-        <input type="text" id="asuntoGasto">
-        <label for="valorGasto">Valor del Gasto:</label>
-        <input type="number" id="valorGasto">
-        <label for="imagenGasto">Subir Boleta/Factura:</label>
-        <input type="file" id="imagenGasto" accept="image/*">
-    </div>
+            <button type="button" id="firmarResponsable">Leer TAG Responsable</button>
+            <input type="text" id="responsable" readonly placeholder="Nombre del Responsable">
+            <input type="text" id="actividad" readonly placeholder="Actividad">
+            <input type="email" id="correoResponsable" readonly placeholder="Correo del Responsable">
+            <input type="date" id="fecha" placeholder="Fecha de la Actividad">
+        </div>
 
-    <button type="submit" id="enviar" style="display: none;">Enviar</button>
+        <!-- Sección Gastos -->
+        <div id="seccionGastos" style="display: none;">
+            <button type="button" id="firmarCoordinadorGastos">Leer TAG Coordinador</button>
+            <input type="text" id="coordinadorGasto" readonly placeholder="Nombre del Coordinador">
+            <input type="text" id="colegioGasto" readonly placeholder="Colegio">
+            <input type="text" id="programaGasto" readonly placeholder="Programa">
+            <input type="date" id="fechaGasto" placeholder="Fecha del Gasto">
+            <input type="text" id="asuntoGasto" placeholder="Asunto del Gasto">
+            <input type="number" id="valorGasto" placeholder="Valor del Gasto">
+            <input type="file" id="imagenGasto" accept="image/*">
+        </div>
+
+        <button type="submit">Enviar</button>
+    </form>
     <p id="status"></p>
 
-    <footer style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
-        <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank" style="color: #4CAF50;">www.ignovacion.com</a></p>
+    <footer>
+        <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank">www.ignovacion.com</a></p>
     </footer>
 
     <script src="script.js"></script>
