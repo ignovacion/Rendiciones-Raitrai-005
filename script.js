@@ -19,17 +19,15 @@ async function leerNFC(tipo) {
             mostrarMensaje("Escaneando NFC... Acerca el tag al dispositivo.", "orange");
 
             nfcReader.onreading = (event) => {
-                const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
+                const nfcData = new TextDecoder().decode(event.message.records[0].data);
+                const lines = nfcData.split("\n").map(line => line.trim());
 
                 if (tipo === "coordinador") {
-                    // Verifica si es lectura de TAG para rendición de voucher o gastos
                     if (document.getElementById("tipoRendicion").value === "voucher") {
                         document.getElementById("coordinador").value = lines[0] || "";
                         document.getElementById("codigoCoordinador").value = lines[1] || "";
                         document.getElementById("colegio").value = lines[2] || "";
                         document.getElementById("programa").value = lines[3] || "";
-                        document.getElementById("estudiantes").value = lines[4] || "";
-                        document.getElementById("apoderados").value = lines[5] || "";
                         document.getElementById("correoCoordinador").value = lines[6] || "";
                     } else if (document.getElementById("tipoRendicion").value === "gastos") {
                         document.getElementById("coordinadorGasto").value = lines[0] || "";
@@ -73,11 +71,11 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
     formData.append("tipo", tipo);
 
     if (tipo === "voucher") {
-        ["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "responsable", "actividad", "correoResponsable"].forEach((id) => {
+        ["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "correoCoordinador", "responsable", "actividad", "correoResponsable", "fecha"].forEach(id => {
             formData.append(id, document.getElementById(id).value || "");
         });
     } else if (tipo === "gastos") {
-        ["coordinadorGasto", "codigoCoordinadorGasto", "colegioGasto", "programaGasto", "fechaGasto", "asuntoGasto", "valorGasto"].forEach((id) => {
+        ["coordinadorGasto", "codigoCoordinadorGasto", "colegioGasto", "programaGasto", "fechaGasto", "asuntoGasto", "valorGasto"].forEach(id => {
             formData.append(id, document.getElementById(id).value || "");
         });
         const fileInput = document.getElementById("imagenGasto");
