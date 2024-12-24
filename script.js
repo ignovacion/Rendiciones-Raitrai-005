@@ -6,11 +6,12 @@ const scriptURL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // R
 document.getElementById("tipoRendicion").addEventListener("change", function () {
     const tipo = this.value;
 
-    // Mostrar solo la sección correspondiente
+    // Ocultar todas las secciones
     document.querySelectorAll(".seccion").forEach((seccion) => {
         seccion.style.display = "none";
     });
 
+    // Mostrar solo la sección correspondiente
     if (tipo === "voucher") {
         document.getElementById("seccionVoucher").style.display = "block";
     } else if (tipo === "gastos") {
@@ -27,12 +28,12 @@ function mostrarMensaje(mensaje, color) {
     status.innerText = mensaje;
 }
 
-// Configurar eventos de lectura NFC (respetando los campos correspondientes)
+// Configurar eventos de lectura NFC
 document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
 document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
 document.getElementById("firmarCoordinadorGastos").addEventListener("click", () => leerNFC("coordinadorGasto"));
 
-// Lógica para manejar los datos NFC
+// Función para leer datos NFC
 async function leerNFC(tipo) {
     if ("NDEFReader" in window) {
         try {
@@ -41,6 +42,7 @@ async function leerNFC(tipo) {
             mostrarMensaje("Escaneando NFC... Acerca el tag al dispositivo.", "orange");
 
             nfcReader.onreading = (event) => {
+                // Decodificar los datos leídos del TAG NFC
                 const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
                 asignarCamposNFC(tipo, lines);
             };
@@ -48,11 +50,11 @@ async function leerNFC(tipo) {
             mostrarMensaje("Error al leer NFC: " + error, "red");
         }
     } else {
-        alert("NFC no soportado en este navegador. Usa Chrome en Android.");
+        alert("Tu navegador no soporta NFC. Usa Google Chrome en Android.");
     }
 }
 
-// Asignar datos leídos a los campos correctos
+// Asignar los datos leídos a los campos correspondientes
 function asignarCamposNFC(tipo, datos) {
     if (tipo === "coordinador") {
         document.getElementById("coordinador").value = datos[0] || "";
@@ -75,5 +77,13 @@ function asignarCamposNFC(tipo, datos) {
 // Enviar el formulario
 document.getElementById("formulario").addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    // Mostrar mensaje de éxito temporal
+    mostrarMensaje("Formulario enviado correctamente.", "green");
     alert("Formulario enviado correctamente.");
+
+    // Recargar la página después de 3 segundos
+    setTimeout(() => {
+        window.location.reload();
+    }, 3000);
 });
