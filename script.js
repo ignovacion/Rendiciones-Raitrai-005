@@ -21,15 +21,22 @@ async function leerNFC(tipo) {
             nfcReader.onreading = (event) => {
                 const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
 
-                // Asignar datos a los campos correspondientes según el tipo de TAG
                 if (tipo === "coordinador") {
-                    document.getElementById("coordinador").value = lines[0] || "";
-                    document.getElementById("codigoCoordinador").value = lines[1] || "";
-                    document.getElementById("colegio").value = lines[2] || "";
-                    document.getElementById("programa").value = lines[3] || "";
-                    document.getElementById("estudiantes").value = lines[4] || "";
-                    document.getElementById("apoderados").value = lines[5] || "";
-                    document.getElementById("correoCoordinador").value = lines[6] || "";
+                    // Verifica si es lectura de TAG para rendición de voucher o gastos
+                    if (document.getElementById("tipoRendicion").value === "voucher") {
+                        document.getElementById("coordinador").value = lines[0] || "";
+                        document.getElementById("codigoCoordinador").value = lines[1] || "";
+                        document.getElementById("colegio").value = lines[2] || "";
+                        document.getElementById("programa").value = lines[3] || "";
+                        document.getElementById("estudiantes").value = lines[4] || "";
+                        document.getElementById("apoderados").value = lines[5] || "";
+                        document.getElementById("correoCoordinador").value = lines[6] || "";
+                    } else if (document.getElementById("tipoRendicion").value === "gastos") {
+                        document.getElementById("coordinadorGasto").value = lines[0] || "";
+                        document.getElementById("codigoCoordinadorGasto").value = lines[1] || "";
+                        document.getElementById("colegioGasto").value = lines[2] || "";
+                        document.getElementById("programaGasto").value = lines[3] || "";
+                    }
                 } else if (tipo === "responsable") {
                     document.getElementById("responsable").value = lines[0] || "";
                     document.getElementById("actividad").value = lines[1] || "";
@@ -55,6 +62,7 @@ function mostrarMensaje(mensaje, color) {
 // Eventos de lectura NFC
 document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
 document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
+document.getElementById("firmarCoordinadorGastos").addEventListener("click", () => leerNFC("coordinador"));
 
 // Enviar formulario
 document.getElementById("formulario").addEventListener("submit", async (event) => {
