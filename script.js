@@ -11,7 +11,7 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
 });
 
 // Función para leer NFC
-async function leerNFC(tipo) {
+async function leerNFC(campoDestino) {
     if ("NDEFReader" in window) {
         try {
             const nfcReader = new NDEFReader();
@@ -21,19 +21,14 @@ async function leerNFC(tipo) {
             nfcReader.onreading = (event) => {
                 const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
 
-                if (tipo === "coordinador") {
-                    document.getElementById("coordinador").value = lines[0] || "";
-                    document.getElementById("codigoCoordinador").value = lines[1] || "";
-                    document.getElementById("colegio").value = lines[2] || "";
-                    document.getElementById("programa").value = lines[3] || "";
-                    document.getElementById("estudiantes").value = lines[4] || "";
-                    document.getElementById("apoderados").value = lines[5] || "";
-                    document.getElementById("correoCoordinador").value = lines[6] || "";
-                } else if (tipo === "responsable") {
-                    document.getElementById("responsable").value = lines[0] || "";
-                    document.getElementById("actividad").value = lines[1] || "";
-                    document.getElementById("correoResponsable").value = lines[2] || "";
+                // Asignar datos solo al campo destino proporcionado
+                for (let i = 0; i < lines.length; i++) {
+                    const field = campoDestino[i];
+                    if (field) {
+                        document.getElementById(field).value = lines[i] || "";
+                    }
                 }
+
                 mostrarMensaje("Lectura completada con éxito.", "green");
             };
         } catch (error) {
@@ -52,8 +47,12 @@ function mostrarMensaje(mensaje, color) {
 }
 
 // Eventos de lectura NFC
-document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
-document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
+document.getElementById("firmarCoordinador").addEventListener("click", () =>
+    leerNFC(["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "correoCoordinador"])
+);
+document.getElementById("firmarResponsable").addEventListener("click", () =>
+    leerNFC(["responsable", "actividad", "correoResponsable"])
+);
 
 // Enviar formulario
 document.getElementById("formulario").addEventListener("submit", async (event) => {
@@ -64,11 +63,11 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
     formData.append("tipo", tipo);
 
     if (tipo === "voucher") {
-        ["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "responsable", "actividad", "correoResponsable"].forEach(id => {
+        ["coordinador", "codigoCoordinador", "colegio", "programa", "estudiantes", "apoderados", "responsable", "actividad", "correoResponsable"].forEach((id) => {
             formData.append(id, document.getElementById(id).value || "");
         });
     } else if (tipo === "gastos") {
-        ["coordinadorGasto", "codigoCoordinadorGasto", "colegioGasto", "programaGasto", "fechaGasto", "asuntoGasto", "valorGasto"].forEach(id => {
+        ["coordinadorGasto", "codigoCoordinadorGasto", "colegioGasto", "programaGasto", "fechaGasto", "asuntoGasto", "valorGasto"].forEach((id) => {
             formData.append(id, document.getElementById(id).value || "");
         });
         const fileInput = document.getElementById("imagenGasto");
