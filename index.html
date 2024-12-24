@@ -19,87 +19,77 @@
 
         <!-- Sección Voucher -->
         <div id="seccionVoucher" style="display: none;">
-            <!-- Leer TAG Responsable -->
+            <h3>Rendición de Voucher</h3>
             <button type="button" id="firmarResponsable">Leer TAG Responsable</button>
-            <div>
-                <label for="responsable">Nombre del Responsable</label>
-                <input type="text" id="responsable" readonly>
-            </div>
-            <div>
-                <label for="actividad">Actividad</label>
-                <input type="text" id="actividad" readonly>
-            </div>
-            <div>
-                <label for="correoResponsable">Correo del Responsable</label>
-                <input type="email" id="correoResponsable" readonly>
-            </div>
+            <label for="responsable">Nombre del Responsable:</label>
+            <input type="text" id="responsable" readonly>
 
-            <!-- Leer TAG Coordinador -->
+            <label for="actividad">Actividad:</label>
+            <input type="text" id="actividad" readonly>
+
+            <label for="correoResponsable">Correo del Responsable:</label>
+            <input type="email" id="correoResponsable" readonly>
+
             <button type="button" id="firmarCoordinador">Leer TAG Coordinador</button>
-            <div>
-                <label for="coordinador">Nombre del Coordinador</label>
-                <input type="text" id="coordinador" readonly>
-            </div>
-            <div>
-                <label for="codigoCoordinador">Código del Coordinador</label>
-                <input type="text" id="codigoCoordinador" readonly>
-            </div>
-            <div>
-                <label for="colegio">Colegio</label>
-                <input type="text" id="colegio" readonly>
-            </div>
-            <div>
-                <label for="programa">Programa</label>
-                <input type="text" id="programa" readonly>
-            </div>
-            <div>
-                <label for="estudiantes">Cantidad de Estudiantes</label>
-                <input type="number" id="estudiantes">
-            </div>
-            <div>
-                <label for="apoderados">Cantidad de Apoderados</label>
-                <input type="number" id="apoderados">
-            </div>
-            <div>
-                <label for="correoCoordinador">Correo del Coordinador</label>
-                <input type="email" id="correoCoordinador" readonly>
-            </div>
-            <div>
-                <label for="fecha">Fecha</label>
-                <input type="date" id="fecha">
-            </div>
+            <label for="coordinador">Nombre del Coordinador:</label>
+            <input type="text" id="coordinador" readonly>
+
+            <label for="codigoCoordinador">Código del Coordinador:</label>
+            <input type="text" id="codigoCoordinador" readonly>
+
+            <label for="colegio">Colegio:</label>
+            <input type="text" id="colegio" readonly>
+
+            <label for="programa">Programa:</label>
+            <input type="text" id="programa" readonly>
+
+            <label for="estudiantes">Cantidad de Estudiantes:</label>
+            <input type="number" id="estudiantes">
+
+            <label for="apoderados">Cantidad de Apoderados:</label>
+            <input type="number" id="apoderados">
+
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha">
         </div>
 
         <!-- Sección Gastos -->
         <div id="seccionGastos" style="display: none;">
+            <h3>Rendición de Gastos</h3>
             <button type="button" id="firmarCoordinadorGastos">Leer TAG Coordinador</button>
-            <div>
-                <label for="coordinadorGasto">Nombre del Coordinador</label>
-                <input type="text" id="coordinadorGasto" readonly>
-            </div>
-            <div>
-                <label for="codigoCoordinadorGasto">Código del Coordinador</label>
-                <input type="text" id="codigoCoordinadorGasto" readonly>
-            </div>
-            <div>
-                <label for="colegioGasto">Colegio</label>
-                <input type="text" id="colegioGasto" readonly>
-            </div>
-            <div>
-                <label for="programaGasto">Programa</label>
-                <input type="text" id="programaGasto" readonly>
-            </div>
-            <div>
-                <label for="fechaGasto">Fecha del Gasto</label>
-                <input type="date" id="fechaGasto">
-            </div>
-            <div>
-                <label for="asuntoGasto">Asunto del Gasto</label>
-                <input type="text" id="asuntoGasto">
-            </div>
-            <div>
-                <label for="valorGasto">Valor del Gasto</label>
-                <input type="number" id="valorGasto">
-            </div>
-            <div>
-                <label for="imagenGasto">Subir Boleta/Factura<
+            <label for="coordinadorGasto">Nombre del Coordinador:</label>
+            <input type="text" id="coordinadorGasto" readonly>
+
+            <label for="codigoCoordinadorGasto">Código del Coordinador:</label>
+            <input type="text" id="codigoCoordinadorGasto" readonly>
+
+            <label for="colegioGasto">Colegio:</label>
+            <input type="text" id="colegioGasto" readonly>
+
+            <label for="programaGasto">Programa:</label>
+            <input type="text" id="programaGasto" readonly>
+
+            <label for="fechaGasto">Fecha del Gasto:</label>
+            <input type="date" id="fechaGasto">
+
+            <label for="asuntoGasto">Asunto del Gasto:</label>
+            <input type="text" id="asuntoGasto">
+
+            <label for="valorGasto">Valor del Gasto:</label>
+            <input type="number" id="valorGasto">
+
+            <label for="imagenGasto">Subir Boleta/Factura:</label>
+            <input type="file" id="imagenGasto" accept="image/*">
+        </div>
+
+        <button type="submit">Enviar</button>
+    </form>
+    <p id="status"></p>
+
+    <footer style="text-align: center; margin-top: 20px; font-size: 14px; color: #555;">
+        <p>Desarrollado por <a href="https://www.ignovacion.com" target="_blank" style="color: #4CAF50;">www.ignovacion.com</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
