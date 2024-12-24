@@ -19,26 +19,38 @@ async function leerNFC(tipo) {
             mostrarMensaje("Escaneando NFC... Acerca el tag al dispositivo.", "orange");
 
             nfcReader.onreading = (event) => {
-                const nfcData = new TextDecoder().decode(event.message.records[0].data);
-                const lines = nfcData.split("\n").map(line => line.trim());
+                const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
 
                 if (tipo === "coordinador") {
-                    if (document.getElementById("tipoRendicion").value === "voucher") {
-                        document.getElementById("coordinador").value = lines[0] || "";
-                        document.getElementById("codigoCoordinador").value = lines[1] || "";
-                        document.getElementById("colegio").value = lines[2] || "";
-                        document.getElementById("programa").value = lines[3] || "";
-                        document.getElementById("correoCoordinador").value = lines[6] || "";
-                    } else if (document.getElementById("tipoRendicion").value === "gastos") {
-                        document.getElementById("coordinadorGasto").value = lines[0] || "";
-                        document.getElementById("codigoCoordinadorGasto").value = lines[1] || "";
-                        document.getElementById("colegioGasto").value = lines[2] || "";
-                        document.getElementById("programaGasto").value = lines[3] || "";
+                    // Verificar si ya se han leído los datos del coordinador
+                    if (document.getElementById("coordinador").readOnly) {
+                        mostrarMensaje("Los datos del coordinador ya han sido leídos.", "red");
+                        return;
                     }
+                    // Asignar datos a los campos del coordinador
+                    document.getElementById("coordinador").value = lines[0] || "";
+                    document.getElementById("codigoCoordinador").value = lines[1] || "";
+                    document.getElementById("colegio").value = lines[2] || "";
+                    document.getElementById("programa").value = lines[3] || "";
+                    document.getElementById("estudiantes").value = lines[4] || "";
+                    document.getElementById("apoderados").value = lines[5] || "";
+                    document.getElementById("correoCoordinador").value = lines[6] || "";
+
+                    // Bloquear campos
+                    bloquearCampos("coordinador");
                 } else if (tipo === "responsable") {
+                    // Verificar si ya se han leído los datos del responsable
+                    if (document.getElementById("responsable").readOnly) {
+                        mostrarMensaje("Los datos del responsable ya han sido leídos.", "red");
+                        return;
+                    }
+                    // Asignar datos a los campos del responsable
                     document.getElementById("responsable").value = lines[0] || "";
                     document.getElementById("actividad").value = lines[1] || "";
                     document.getElementById("correoResponsable").value = lines[2] || "";
+
+                    // Bloquear campos
+                    bloquearCampos("responsable");
                 }
                 mostrarMensaje("Lectura completada con éxito.", "green");
             };
@@ -50,7 +62,31 @@ async function leerNFC(tipo) {
     }
 }
 
-// Mostrar mensajes
+// Función para bloquear campos
+function bloquearCampos(tipo) {
+    const fieldsToBlock = tipo === "coordinador" ? [
+        "coordinador",
+        "codigoCoordinador",
+        "colegio",
+        "programa",
+        "estudiantes",
+        "apoderados",
+        "correoCoordinador"
+    ] : [
+        "responsable",
+        "actividad",
+        "correoResponsable"
+    ];
+
+    fieldsToBlock.forEach(id => {
+        const field = document.getElementById(id);
+        if (field) {
+            field.readOnly = true;
+        }
+    });
+}
+
+// Mostrar mensajes en la interfaz
 function mostrarMensaje(mensaje, color) {
     const status = document.getElementById("status");
     status.style.color = color;
