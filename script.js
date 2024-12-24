@@ -11,7 +11,7 @@ document.getElementById("tipoRendicion").addEventListener("change", function () 
 });
 
 // Función para leer NFC
-async function leerNFC(campoDestino, tipo) {
+async function leerNFC(tipo) {
     if ("NDEFReader" in window) {
         try {
             const nfcReader = new NDEFReader();
@@ -20,6 +20,7 @@ async function leerNFC(campoDestino, tipo) {
 
             nfcReader.onreading = (event) => {
                 const lines = new TextDecoder().decode(event.message.records[0].data).split("\n");
+
                 if (tipo === "coordinador") {
                     document.getElementById("coordinador").value = lines[0] || "";
                     document.getElementById("codigoCoordinador").value = lines[1] || "";
@@ -51,12 +52,13 @@ function mostrarMensaje(mensaje, color) {
 }
 
 // Eventos de lectura NFC
-document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC(null, "coordinador"));
-document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC(null, "responsable"));
+document.getElementById("firmarCoordinador").addEventListener("click", () => leerNFC("coordinador"));
+document.getElementById("firmarResponsable").addEventListener("click", () => leerNFC("responsable"));
 
 // Enviar formulario
 document.getElementById("formulario").addEventListener("submit", async (event) => {
     event.preventDefault();
+
     const tipo = document.getElementById("tipoRendicion").value;
     const formData = new FormData();
     formData.append("tipo", tipo);
@@ -76,7 +78,11 @@ document.getElementById("formulario").addEventListener("submit", async (event) =
     }
 
     try {
-        const response = await fetch(scriptURL, { method: "POST", body: formData });
+        const response = await fetch(scriptURL, {
+            method: "POST",
+            body: formData,
+        });
+
         const result = await response.text();
         console.log(result);
         alert("Datos enviados correctamente.");
